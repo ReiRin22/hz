@@ -1,0 +1,8 @@
+/**
+ * stickyNote Request 型定義
+ * フロントエンド・BFF 共通
+ */
+
+export interface StickyNoteRequest {
+  // TODO: リクエスト型を定義
+}

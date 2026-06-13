@@ -1,0 +1,27 @@
+{
+  "name": "Python",
+  "image": "mcr.microsoft.com/devcontainers/python:3",
+  "workspaceFolder": "/workspaces/harz",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/harz/product,type=bind",
+  "mounts": [
+    "source=${localWorkspaceFolder}/../docs,target=/workspaces/harz/docs,type=bind",
+    "source=${localWorkspaceFolder}/../.claude,target=/workspaces/harz/.claude,type=bind"
+  ],
+  "remoteEnv": {
+    "AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
+    "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
+    "ANTHROPIC_MODEL": "${localEnv:ANTHROPIC_MODEL}",
+    "AWS_REGION": "${localEnv:AWS_REGION}",
+    "CLAUDE_CODE_USE_BEDROCK": "${localEnv:CLAUDE_CODE_USE_BEDROCK}"
+  },
+  "postCreateCommand": "pip install 'markitdown[xlsx]'",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "MS-CEINTL.vscode-language-pack-ja",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "receptionPatientList": {
+    "filterBar": {
+      "dateLabel": "診察日",
+      "showCompletedLabel": "診察済含む",
+      "showReservationsLabel": "予約含む",
+      "departmentLabel": "診療科",
+      "departmentAll": "すべて",
+      "doctorLabel": "診察医",
+      "statsConsultedLabel": "診察済み患者",
+      "statsReceptedLabel": "受付済み患者",
+      "statsTargetLabel": "当日対象"
+    },
+    "patientList": {
+      "columns": {
+        "category": "区分",
+        "type": "種別",
+        "receptionTime": "受付時間",
+        "appointmentSlot": "予約時間",
+        "callBtn": "呼出",
+        "patientId": "ID",
+        "name": "氏名",
+        "kana": "カナ",
+        "gender": "性別",
+        "birthDate": "生年月日",
+        "age": "年齢",
+        "department": "診療科",
+        "medicalCategory": "診療区分",
+        "memo": "診療メモ",
+        "multiDepartment": "併科",
+        "remarks": "備考",
+        "consultation": "診察",
+        "prescription": "処方",
+        "injection": "注射",
+        "treatment": "処置",
+        "specimen": "検体",
+        "bacteria": "細菌",
+        "pathology": "病理",
+        "physiology": "生理",
+        "endoscopy": "内視",
+        "imaging": "画像",
+        "rehabilitation": "リハ",
+        "dialysis": "透析",
+        "surgery": "手術",
+        "guidance": "指導",
+        "paymentComplete": "会計"
+      },
+      "callBtnLabel": "呼出",
+      "noData": "該当する患者がいません",
+      "duplicateNameTooltip": "同姓同名の患者がいます",
+      "multiDepartmentYes": "有",
+      "paymentDone": "済",
+      "cancelConsultationTitle": "診察終了を取り消しますか？",
+      "cancelConsultationDesc": "{name}さんの診察終了を取り消し、未実施（○）に戻します。",
+      "cancelBtn": "キャンセル",
+      "confirmCancelBtn": "取り消す",
+      "cancelSuccessToast": "{name}さんの診察終了を取り消しました"
+    },
+    "receptionPatientListFeature": {
+      "title": "受診者一覧",
+      "loading": "読み込み中...",
+      "errorTitle": "データ取得エラー",
+      "errorText": "受診者情報の取得に失敗しました。"
+    }
+  }
+}

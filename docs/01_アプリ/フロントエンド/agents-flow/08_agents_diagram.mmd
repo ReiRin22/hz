@@ -1,0 +1,58 @@
+graph TB
+    Main["メインエージェント<br/>(implement.md)"]
+
+    subgraph Planning["実装計画"]
+        ImplPlanner["app-impl-planner<br/>(計画立案・コード変更なし)"]
+        TestPlanner["samples-test-planner<br/>(テストケース生成)"]
+    end
+
+    subgraph Review["実装レビュー"]
+        ImplReviewer["app-impl-reviewer<br/>(コードレビュー・品質チェック)"]
+        ImplReviewer --> Foundation["★ app-foundation-boundary/SKILL.md<br/>(基盤担当領域チェック)"]
+        ImplReviewer --> CrossLayer["★ cross-layer-rules.md<br/>(FE/BFF/BE横断ルール)"]
+        ImplReviewer --> PhaseTest["phase{N}-test/SKILL.md<br/>(Phase固有の検証)"]
+        ImplReviewer --> Perspectives["review-missing-perspectives.md<br/>(見落としパターン記録)"]
+    end
+
+    subgraph Simplify["リファクタリング"]
+        ImplSimplifier["app-impl-simplifier<br/>(テスト・レビューPASS後の簡素化)"]
+    end
+
+    subgraph ServerTest["サーバーテスト"]
+        ServerTestAgent["app-server-test-agent<br/>(localhost:3000 動作確認)"]
+    end
+
+    subgraph Consistency["整合性確認"]
+        ConsistencyChecker["samples-consistency-checker<br/>(state.md/INDEX.md/tasklist.md)"]
+    end
+
+    subgraph StoryPlan["Storybook計画"]
+        ScriptPlanDrafter["app-script-plan-drafter<br/>(Storybook実装計画書生成)"]
+    end
+
+    Main --> Planning
+    Main --> Review
+    Main --> Simplify
+    Main --> ServerTest
+    Main --> Consistency
+    Main --> StoryPlan
+
+    Planning -.->|"ステップ1"| Main
+    Review -.->|"Phase完了毎"| Main
+    Simplify -.->|"レビューPASS後"| Main
+    ServerTest -.->|"Phase 10"| Main
+    Consistency -.->|"完了時"| Main
+    StoryPlan -.->|"/plan コマンド"| Main
+
+    style Main fill:#e1f5ff
+    style ImplPlanner fill:#c8e6c9
+    style TestPlanner fill:#c8e6c9
+    style ImplReviewer fill:#ffccbc
+    style Foundation fill:#fff9c4
+    style CrossLayer fill:#fff9c4
+    style PhaseTest fill:#fff9c4
+    style Perspectives fill:#fff9c4
+    style ImplSimplifier fill:#e1bee7
+    style ServerTestAgent fill:#e1bee7
+    style ConsistencyChecker fill:#e1bee7
+    style ScriptPlanDrafter fill:#e1bee7

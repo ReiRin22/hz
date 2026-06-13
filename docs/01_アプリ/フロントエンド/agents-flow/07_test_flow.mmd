@@ -1,0 +1,85 @@
+graph TB
+    Start(["/implement Phase 8 開始"])
+
+    subgraph Phase8["Phase 8: Storybook セットアップ"]
+        P8Start["implement-phase8/SKILL.md"]
+        P8Start --> T81["T8-1: Storybookセットアップ確認<br/>(@storybook/react-vite)"]
+        P8Start --> T82["T8-2: molecules story作成<br/>(CSF3形式)"]
+        P8Start --> T83["T8-3: organisms story作成<br/>(fullscreen + store実装のまま)"]
+        P8Start --> T84["T8-4: story title確認<br/>('LV1/LV2/LV3/molecules/名前')"]
+        P8Start --> T85["T8-5: hooks操作イベント一覧メモ<br/>(phase9-actions-memo.md)"]
+
+        T81 & T82 & T83 & T84 & T85 --> P8Test["phase8-test/SKILL.md"]
+        P8Test --> P8Pass["✅ Phase 8 PASS"]
+    end
+
+    P8Pass --> Phase9Start(["/implement Phase 9 開始"])
+
+    subgraph Phase9["Phase 9: MSW + Vitest"]
+        P9Start["implement-phase9/SKILL.md"]
+        P9Start --> T91["T9-1: MSWセットアップ<br/>(.storybook/preview.tsx + msw.ts)"]
+        P9Start --> T92["T9-2: MSWハンドラー作成<br/>(mocks/handlers/)"]
+        P9Start --> T93["T9-3: storyテスト作成<br/>(@storybook/test + test-runner)"]
+        P9Start --> T94["T9-4: Vitest実行<br/>(C0: 80%, C1: 70%, C2: 80%)"]
+
+        T91 & T92 & T93 & T94 --> P9Test["phase9-test/SKILL.md"]
+        P9Test --> P9Pass["✅ Phase 9 PASS"]
+    end
+
+    P9Pass --> Phase10Start(["/implement Phase 10 開始"])
+
+    subgraph Phase10["Phase 10: E2E + ドキュメント"]
+        P10Start["implement-phase10/SKILL.md"]
+        P10Start --> T101["T10-1: ルートパス登録<br/>(product/frontend/src/app/)"]
+        P10Start --> T102["T10-2: server-test.sh作成<br/>(ローカルサーバー起動スクリプト)"]
+        P10Start --> T103["T10-3: {CODE}-test.js作成<br/>(server-test-agent 実行スクリプト)"]
+        P10Start --> T104["T10-4: Vitest実行<br/>(最終カバレッジ確認)"]
+        P10Start --> T105["T10-5: E2Eテスト作成<br/>(Playwright + app-e2e-test-prep)"]
+        P10Start --> T106["T10-6: Storybookビルド確認<br/>(npm run build-storybook)"]
+        P10Start --> T107["T10-7: README.md作成<br/>(機能概要・テスト実行方法)"]
+
+        T101 & T102 & T103 & T104 & T105 & T106 & T107 --> P10Test["phase10-test/SKILL.md"]
+        P10Test --> P10Pass["✅ Phase 10 PASS"]
+    end
+
+    P10Pass --> Complete["🎉 実装完了<br/>INDEX.md を done に更新"]
+
+    subgraph Coverage["カバレッジ要件"]
+        C0["C0: Statement coverage ≥ 80%"]
+        C1["C1: Branch coverage ≥ 70%"]
+        C2["C2: Function coverage ≥ 80%"]
+    end
+
+    T94 -.->|検証| Coverage
+    T104 -.->|最終確認| Coverage
+
+    style Start fill:#e1f5ff
+    style P8Start fill:#e1bee7
+    style P9Start fill:#e1bee7
+    style P10Start fill:#e1bee7
+    style P8Test fill:#ffccbc
+    style P9Test fill:#ffccbc
+    style P10Test fill:#ffccbc
+    style P8Pass fill:#c8e6c9
+    style P9Pass fill:#c8e6c9
+    style P10Pass fill:#c8e6c9
+    style Complete fill:#c8e6c9
+    style T81 fill:#fff9c4
+    style T82 fill:#fff9c4
+    style T83 fill:#fff9c4
+    style T84 fill:#fff9c4
+    style T85 fill:#fff9c4
+    style T91 fill:#fff9c4
+    style T92 fill:#fff9c4
+    style T93 fill:#fff9c4
+    style T94 fill:#fff9c4
+    style T101 fill:#fff9c4
+    style T102 fill:#fff9c4
+    style T103 fill:#fff9c4
+    style T104 fill:#fff9c4
+    style T105 fill:#fff9c4
+    style T106 fill:#fff9c4
+    style T107 fill:#fff9c4
+    style C0 fill:#ffccbc
+    style C1 fill:#ffccbc
+    style C2 fill:#ffccbc

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- エラーレスポンスメッセージ -->
+  <data name="E400000" xml:space="preserve">
+    <value>不正なリクエストです。</value>
+  </data>
+  <data name="E404000" xml:space="preserve">
+    <value>リソースが見つかりません。</value>
+  </data>
+  <data name="E409000" xml:space="preserve">
+    <value>業務ルール違反が発生しました。</value>
+  </data>
+  <data name="E500001" xml:space="preserve">
+    <value>サーバーエラーが発生しました。管理者に連絡してください。</value>
+  </data>
+
+  <!-- 業務エラーメッセージ -->
+  <data name="E_PATIENT_ID_REQUIRED" xml:space="preserve">
+    <value>患者IDは必須です。</value>
+  </data>
+  <data name="E_REQUEST_VALIDATION_FAILED" xml:space="preserve">
+    <value>リクエストのバリデーションに失敗しました。</value>
+  </data>
+
+  <!-- ログメッセージ -->
+  <data name="LOG_UNEXPECTED_ERROR" xml:space="preserve">
+    <value>予期せぬエラーが発生しました。</value>
+  </data>
+  <data name="LOG_CHIEF_COMPLAINT_GET" xml:space="preserve">
+    <value>主訴・所見を取得します。PatientId={0}</value>
+  </data>
+  <data name="LOG_CHIEF_COMPLAINT_NOT_FOUND" xml:space="preserve">
+    <value>主訴・所見のレコードが存在しません。PatientId={0}</value>
+  </data>
+  <data name="LOG_VITAL_INFO_GET" xml:space="preserve">
+    <value>バイタル情報を取得します。PatientId={0}</value>
+  </data>
+  <data name="LOG_VITAL_INFO_NOT_FOUND" xml:space="preserve">
+    <value>バイタル情報のレコードが存在しません。PatientId={0}</value>
+  </data>
+  <data name="LOG_PRESCRIPTION_ORDER_GET" xml:space="preserve">
+    <value>処方オーダーを取得します。PatientId={0}</value>
+  </data>
+
+</root>

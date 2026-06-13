@@ -1,0 +1,152 @@
+<mxfile host="Claude" modified="2026-06-09T00:00:00.000Z" agent="Claude Code" version="1.0">
+  <diagram id="diagram-1" name="REC005 Record Save FSM">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;診療記録保存フロー FSM（REC005）&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="600" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- States (Control/FSM color: amber) -->
+        <mxCell id="state-idle" value="&lt;b&gt;IDLE&lt;/b&gt;&lt;br&gt;待機状態&lt;br&gt;入力フォーム表示中" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-validating" value="&lt;b&gt;VALIDATING&lt;/b&gt;&lt;br&gt;バリデーション中&lt;br&gt;入力値チェック" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="380" y="120" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-confirming" value="&lt;b&gt;CONFIRMING&lt;/b&gt;&lt;br&gt;確認待ち&lt;br&gt;保存内容プレビュー" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="660" y="120" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-saving" value="&lt;b&gt;SAVING&lt;/b&gt;&lt;br&gt;保存中&lt;br&gt;BFF API呼び出し" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="940" y="120" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-success" value="&lt;b&gt;SUCCESS&lt;/b&gt;&lt;br&gt;保存成功&lt;br&gt;成功メッセージ表示" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="940" y="280" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-error" value="&lt;b&gt;ERROR&lt;/b&gt;&lt;br&gt;エラー状態&lt;br&gt;エラーメッセージ表示" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce7f3;strokeColor=#db2777;fontSize=11;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="380" y="280" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Transitions (Control arrows: red, dashed) -->
+        <mxCell id="trans-idle-validate" value="保存ボタン押下&lt;br&gt;[必須項目入力済み]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-idle" target="state-validating" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-validate-error" value="バリデーション&lt;br&gt;エラー検出" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-validating" target="state-error" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-validate-confirm" value="バリデーション&lt;br&gt;成功" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-validating" target="state-confirming" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-confirm-save" value="確認ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-confirming" target="state-saving" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-save-success" value="API応答 200&lt;br&gt;[保存成功]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-saving" target="state-success" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-save-error" value="API応答 4xx/5xx&lt;br&gt;[保存失敗]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-saving" target="state-error" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="240"/>
+              <mxPoint x="460" y="240"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-error-idle" value="修正ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-error" target="state-idle" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="320"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-confirm-cancel" value="キャンセル" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=1;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-confirming" target="state-idle" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="60"/>
+              <mxPoint x="180" y="60"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-success-idle" value="閉じるボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-success" target="state-idle" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="420"/>
+              <mxPoint x="180" y="420"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Self-loop: IDLE state -->
+        <mxCell id="trans-idle-self" value="入力中&lt;br&gt;[編集操作]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;fontColor=#000000;labelBackgroundColor=#FFFFFF;html=1;" edge="1" source="state-idle" target="state-idle" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="100" y="160"/>
+              <mxPoint x="60" y="160"/>
+              <mxPoint x="60" y="160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#495057;" vertex="1" parent="1">
+          <mxGeometry x="100" y="480" width="220" height="240" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-title" value="&lt;b&gt;凡例&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="490" width="220" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-state" value="処理状態（FSM）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="120" y="520" width="180" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-success" value="成功状態" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="120" y="560" width="180" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-error" value="エラー状態" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce7f3;strokeColor=#db2777;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="120" y="600" width="180" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-trans-solid" value="通常遷移" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=0;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="655" as="sourcePoint"/>
+            <mxPoint x="300" y="655" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend-trans-dashed" value="キャンセル遷移" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#e03131;strokeWidth=2;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="685" as="sourcePoint"/>
+            <mxPoint x="300" y="685" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Annotations -->
+        <mxCell id="note-flow" value="&lt;b&gt;状態遷移フロー&lt;/b&gt;&lt;br&gt;1. IDLE → VALIDATING（保存ボタン）&lt;br&gt;2. VALIDATING → CONFIRMING（検証OK）&lt;br&gt;3. CONFIRMING → SAVING（確認OK）&lt;br&gt;4. SAVING → SUCCESS（API成功）&lt;br&gt;5. SUCCESS → IDLE（閉じる）&lt;br&gt;&lt;br&gt;エラー時は ERROR → IDLE で修正可能" style="text;html=1;strokeColor=#94a3b8;fillColor=#f8fafc;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="380" y="480" width="260" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note-api" value="&lt;b&gt;API呼び出し&lt;/b&gt;&lt;br&gt;SAVING状態で以下を実行:&lt;br&gt;- POST /api/records（記録保存）&lt;br&gt;- POST /api/orders（オーダー登録）&lt;br&gt;- POST /api/vitals（バイタル記録）&lt;br&gt;&lt;br&gt;楽観的ロック対応:&lt;br&gt;- versionカラムで競合検出&lt;br&gt;- 競合時はERROR状態へ遷移" style="text;html=1;strokeColor=#94a3b8;fillColor=#f8fafc;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="700" y="480" width="240" height="160" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

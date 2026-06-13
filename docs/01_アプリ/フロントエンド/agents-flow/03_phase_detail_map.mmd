@@ -1,0 +1,133 @@
+graph TB
+    subgraph Phase0["Phase 0: スコープ確定"]
+        P0S["implement-phase0/SKILL.md"]
+        P0S --> T01["T0-1: LV3判定・shared振り分け洗い出し"]
+        P0S --> T02["T0-2: 機能タグ型定義"]
+        P0S --> T03["T0-3: 個別詳細設計書読み込み"]
+        P0S --> T04["T0-4: 操作イベント一覧作成"]
+        P0S --> T05["T0-5: API一覧作成"]
+        P0S --> T06["T0-6: コンポーネント構造洗い出し"]
+        T01 & T02 & T03 & T04 & T05 & T06 --> P0T["phase0-test/SKILL.md"]
+    end
+
+    subgraph Phase1["Phase 1: 基盤整備"]
+        P1S["implement-phase1/SKILL.md"]
+        P1S --> T11["T1-1: ディレクトリ作成"]
+        P1S --> T12["T1-2: 型定義作成"]
+        P1S --> T13["T1-3: shared振り分け実行"]
+        T11 & T12 & T13 --> P1T["phase1-test/SKILL.md"]
+    end
+
+    subgraph Phase2["Phase 2: API・Repository"]
+        P2S["implement-phase2/SKILL.md"]
+        P2S --> T21["T2-1: api/通信関数実装"]
+        P2S --> T22["T2-2: repository/複合API実装"]
+        T21 & T22 --> P2T["phase2-test/SKILL.md"]
+        P2S -.->|参照| BFF["app-bff-fetch-impl/SKILL.md"]
+    end
+
+    subgraph Phase3["Phase 3: 状態管理"]
+        P3S["implement-phase3/SKILL.md"]
+        P3S --> T31["T3-1: stores/Zustandストア実装"]
+        T31 --> P3T["phase3-test/SKILL.md"]
+    end
+
+    subgraph Phase4["Phase 4: Hook層"]
+        P4S["implement-phase4/SKILL.md"]
+        P4S --> T41["T4-1: hooks/カスタムフック実装"]
+        T41 --> P4T["phase4-test/SKILL.md"]
+    end
+
+    subgraph Phase5["Phase 5: コンポーネント層"]
+        P5S["implement-phase5/SKILL.md"]
+        P5S --> T51["T5-1: atoms実装"]
+        P5S --> T52["T5-2: molecules実装"]
+        P5S --> T53["T5-3: organisms実装"]
+        T51 & T52 & T53 --> P5T["phase5-test/SKILL.md"]
+    end
+
+    subgraph Phase6["Phase 6: 機能実装"]
+        P6S["implement-phase6/SKILL.md"]
+        P6S --> T61["T6-1: Feature実装"]
+        P6S --> T62["T6-2: Page実装"]
+        P6S --> T63["T6-3: 操作フロー確認"]
+        T61 & T62 & T63 --> P6T["phase6-test/SKILL.md"]
+        P6S -.->|参照| TypeI["app-component-type-interface/SKILL.md"]
+    end
+
+    subgraph Phase7["Phase 7: バリデーション"]
+        P7S["implement-phase7/SKILL.md"]
+        P7S --> T71["T7-1: Zodスキーマ定義"]
+        P7S --> T72["T7-2: バリデーションロジック実装"]
+        P7S --> T73["T7-3: エラーハンドリング実装"]
+        T71 & T72 & T73 --> P7T["phase7-test/SKILL.md"]
+    end
+
+    subgraph Phase8["Phase 8: Storybook"]
+        P8S["implement-phase8/SKILL.md"]
+        P8S --> T81["T8-1: Storybookセットアップ確認"]
+        P8S --> T82["T8-2: molecules story作成"]
+        P8S --> T83["T8-3: organisms story作成"]
+        P8S --> T84["T8-4: story title確認"]
+        P8S --> T85["T8-5: hooks操作イベント一覧メモ作成"]
+        T81 & T82 & T83 & T84 & T85 --> P8T["phase8-test/SKILL.md"]
+    end
+
+    subgraph Phase9["Phase 9: MSW/Vitest"]
+        P9S["implement-phase9/SKILL.md"]
+        P9S --> T91["T9-1: MSWセットアップ"]
+        P9S --> T92["T9-2: MSWハンドラー作成"]
+        P9S --> T93["T9-3: storyテスト作成"]
+        P9S --> T94["T9-4: Vitest実行"]
+        T91 & T92 & T93 & T94 --> P9T["phase9-test/SKILL.md"]
+    end
+
+    subgraph Phase10["Phase 10: E2E/ドキュメント"]
+        P10S["implement-phase10/SKILL.md"]
+        P10S --> T101["T10-1: ルートパス登録"]
+        P10S --> T102["T10-2: server-test.sh作成"]
+        P10S --> T103["T10-3: {CODE}-test.js作成"]
+        P10S --> T104["T10-4: Vitest実行"]
+        P10S --> T105["T10-5: E2Eテスト作成"]
+        P10S --> T106["T10-6: Storybookビルド確認"]
+        P10S --> T107["T10-7: README.md作成"]
+        T101 & T102 & T103 & T104 & T105 & T106 & T107 --> P10T["phase10-test/SKILL.md"]
+        P10S -.->|参照| E2E["app-e2e-test-prep/SKILL.md"]
+    end
+
+    P0T --> Phase1
+    P1T --> Phase2
+    P2T --> Phase3
+    P3T --> Phase4
+    P4T --> Phase5
+    P5T --> Phase6
+    P6T --> Phase7
+    P7T --> Phase8
+    P8T --> Phase9
+    P9T --> Phase10
+
+    style P0S fill:#e1bee7
+    style P1S fill:#e1bee7
+    style P2S fill:#e1bee7
+    style P3S fill:#e1bee7
+    style P4S fill:#e1bee7
+    style P5S fill:#e1bee7
+    style P6S fill:#e1bee7
+    style P7S fill:#e1bee7
+    style P8S fill:#e1bee7
+    style P9S fill:#e1bee7
+    style P10S fill:#e1bee7
+    style P0T fill:#ffccbc
+    style P1T fill:#ffccbc
+    style P2T fill:#ffccbc
+    style P3T fill:#ffccbc
+    style P4T fill:#ffccbc
+    style P5T fill:#ffccbc
+    style P6T fill:#ffccbc
+    style P7T fill:#ffccbc
+    style P8T fill:#ffccbc
+    style P9T fill:#ffccbc
+    style P10T fill:#ffccbc
+    style BFF fill:#c8e6c9
+    style TypeI fill:#c8e6c9
+    style E2E fill:#c8e6c9

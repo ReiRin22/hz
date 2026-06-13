@@ -1,0 +1,69 @@
+graph TB
+    Start(["/implement Phase完了"])
+    Start --> CallReviewer["app-impl-reviewer 起動"]
+
+    CallReviewer --> Step1["★ STEP 1:<br/>review-missing-perspectives.md 読み込み"]
+    Step1 --> Step2["★ STEP 2:<br/>app-foundation-boundary/SKILL.md 読み込み"]
+
+    Step2 --> Check1{"基盤担当パスに<br/>該当するファイルあり?"}
+    Check1 -->|Yes| Block1["❌ BLOCK<br/>基盤チーム担当領域への変更を検出<br/>実装を中止"]
+    Check1 -->|No| Step3["STEP 3:<br/>cross-layer-rules.md 読み込み"]
+
+    Step3 --> Check2{"型安全性違反<br/>層の責務違反<br/>環境変数違反?"}
+    Check2 -->|Yes| Block2["❌ BLOCK<br/>横断ルール違反を検出<br/>修正が必要"]
+    Check2 -->|No| Step4["STEP 4:<br/>Phaseごとの品質チェック"]
+
+    Step4 --> CheckPhase{"現在のPhase"}
+
+    CheckPhase -->|Phase 0| P0["T0-1〜T0-6記録確認<br/>タグ実在確認"]
+    CheckPhase -->|Phase 1| P1["ディレクトリ構造確認<br/>shared振り分け実行確認"]
+    CheckPhase -->|Phase 2| P2["APIカバレッジ確認<br/>型整合性確認"]
+    CheckPhase -->|Phase 3| P3["ストアカバレッジ確認<br/>storeRegistry確認"]
+    CheckPhase -->|Phase 4| P4["操作イベントカバレッジ確認<br/>'use client'確認"]
+    CheckPhase -->|Phase 5| P5["コンポーネントカバレッジ確認<br/>RSC/RCC境界確認"]
+    CheckPhase -->|Phase 6| P6["操作フローカバレッジ確認<br/>楽観的更新確認"]
+    CheckPhase -->|Phase 7| P7["バリデーションカバレッジ確認<br/>エラーコード統一確認"]
+    CheckPhase -->|Phase 8| P8["Storybookセットアップ確認<br/>story作成確認"]
+    CheckPhase -->|Phase 9| P9["MSW設定確認<br/>storyテスト確認"]
+    CheckPhase -->|Phase 10| P10["E2Eテスト確認<br/>ドキュメント確認"]
+
+    P0 & P1 & P2 & P3 & P4 & P5 & P6 & P7 & P8 & P9 & P10 --> Step5["STEP 5:<br/>phase-test/SKILL.md 実行"]
+
+    Step5 --> Check3{"テスト結果"}
+    Check3 -->|FAIL| Block3["❌ FAIL<br/>Phase固有のチェック失敗<br/>修正が必要"]
+    Check3 -->|PASS| Step6["STEP 6:<br/>レビュー結果レポート生成"]
+
+    Step6 --> Check4{"新しい見落とし<br/>パターン発見?"}
+    Check4 -->|Yes| Update["review-missing-perspectives.md 更新"]
+    Check4 -->|No| End["✅ PASS<br/>次セッションへ"]
+
+    Update --> End
+
+    Block1 --> End
+    Block2 --> End
+    Block3 --> End
+
+    style Start fill:#e1f5ff
+    style CallReviewer fill:#e1bee7
+    style Step1 fill:#fff9c4
+    style Step2 fill:#fff9c4
+    style Step3 fill:#c8e6c9
+    style Step4 fill:#c8e6c9
+    style Step5 fill:#ffccbc
+    style Step6 fill:#c8e6c9
+    style Update fill:#fff9c4
+    style End fill:#c8e6c9
+    style Block1 fill:#ffcdd2
+    style Block2 fill:#ffcdd2
+    style Block3 fill:#ffcdd2
+    style P0 fill:#e1bee7
+    style P1 fill:#e1bee7
+    style P2 fill:#e1bee7
+    style P3 fill:#e1bee7
+    style P4 fill:#e1bee7
+    style P5 fill:#e1bee7
+    style P6 fill:#e1bee7
+    style P7 fill:#e1bee7
+    style P8 fill:#e1bee7
+    style P9 fill:#e1bee7
+    style P10 fill:#e1bee7

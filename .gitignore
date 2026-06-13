@@ -1,0 +1,42 @@
+.omc/
+
+# Playwright browser dependencies (system libs for WSL)
+*.deb
+node_modules/
+.steering/
+.steering-shared/
+.claude/plans/dashboard/
+# 開発中の詳細設計書
+docs/02_アプリ基盤/01_フロントエンド/02_詳細設計書/old/
+# Storybookのビルド成果物
+storybook-static/
+script-plan/
+# フロントエンドテスト実行パス
+ci.env/
+
+#キャッシュ計算設定入れたため
+.claude/settings.json
+.claude/logs/
+.serena/
+.claude/settings.local.json
+
+# Cipher データベース（セッション履歴・ベクトルDB）
+data/
+
+# 共有フォルダへのシンボリックリンク
+shared-steering
+
+# 同期用一時ファイル
+.sync-cache/
+
+#DBファイル
+tmp/
+
+gitlab-runner/logs/
+
+product/node_modules/.claude/.env
+.claude/.env
+super/
+.superpowers/
+
+.claude/worktrees/

@@ -1,0 +1,177 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+  @page { margin: 20mm; }
+  body { font-family: 'Meiryo', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif;
+         max-width: 900px; margin: 40px auto; line-height: 1.8; font-size: 10pt; color: #222; }
+  h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 6px; margin-top: 0; }
+  h2 { font-size: 14pt; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  h3 { font-size: 12pt; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; table-layout: fixed; }
+  td, th { border: 1px solid #bbb; padding: 6px 10px; word-break: break-word; overflow-wrap: anywhere; }
+  th { background: #f0f0f0; font-weight: bold; }
+  code { background: #f5f5f5; padding: 2px 5px; border-radius: 3px; font-size: 9pt; }
+  pre:not(.mermaid) { background: #f5f5f5; padding: 14px; overflow-x: auto; border-radius: 4px; }
+  blockquote { border-left: 4px solid #ccc; margin: 0; padding: 4px 16px; color: #555; }
+  a { color: #1a73e8; }
+</style></head><body><h2>1. 透析オーダー登録〜透析前準備</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    actor 患者
+    actor 医師
+    actor 看護師
+    actor ME as 臨床工学技士（ME）
+    participant 電子カルテ
+    participant 透析管理システム
+
+    Note over 医師,電子カルテ: 【透析適応判断】病室・ナースステーション（初回）
+    医師 -&gt;&gt; 患者: 透析適応判断
+    医師 -&gt;&gt; 電子カルテ: 透析適応判断内容記録
+
+    Note over 医師,電子カルテ: 【透析オーダー登録】病室・ナースステーション（初回）
+    医師 -&gt;&gt; 電子カルテ: 透析オーダー登録（日程調整・登録）
+    電子カルテ --&gt;&gt; 透析管理システム: 透析オーダー連携
+
+    Note over 看護師,電子カルテ: 【指示確認・登録】ナースステーション
+    電子カルテ --&gt;&gt; 看護師: 透析オーダー通知
+    看護師 -&gt;&gt; 電子カルテ: 指示内容確認・登録
+    電子カルテ --&gt;&gt; ME: 透析オーダー通知
+    ME -&gt;&gt; 電子カルテ: 指示内容確認・登録
+
+    Note over 看護師,患者: 【透析前処置】病室（透析当日）
+    看護師 -&gt;&gt; 患者: 体重測定
+    看護師 -&gt;&gt; 患者: バイタル測定
+    看護師 -&gt;&gt; 患者: 内服調整（降圧薬等）
+    看護師 -&gt;&gt; 患者: 禁食・飲水制限確認（必要時）
+    看護師 -&gt;&gt; 電子カルテ: アレルギー・抗凝固薬使用状況確認
+    看護師 -&gt;&gt; 患者: シャント状態確認（スリル・発赤等）
+    看護師 -&gt;&gt; 患者: 穿刺部位確認
+    看護師 -&gt;&gt; 電子カルテ: 前回透析内容確認
+    alt 除水量の妥当性確認が必要
+        看護師 -&gt;&gt; 医師: 除水量の妥当性相談
+        医師 -&gt;&gt; 看護師: 指示
+    else 問題なし
+        Note over 看護師: 確認完了
+    end
+    看護師 -&gt;&gt; 電子カルテ: 前処置結果記録（体重・バイタル等）
+
+    Note over 看護師,医師: 【搬送準備・透析可否判断】病室（透析当日）
+    看護師 -&gt;&gt; 医師: 状態報告（体重・バイタル・内服状況）
+    医師 -&gt;&gt; 看護師: 透析可否判断・搬送方法指示
+    看護師 -&gt;&gt; 看護師: 搬送方法調整（ストレッチャー等）
+
+    Note over 看護師,患者: 【患者移送】病室→透析室（透析当日）
+    看護師 -&gt;&gt; 患者: 患者移送（病室→透析室）
+    患者 -&gt;&gt; 患者: 透析室到着
+
+    Note over ME,患者: 【本人確認・透析前準備】透析室
+    ME -&gt;&gt; 患者: 本人確認
+    ME -&gt;&gt; ME: 3点チェック（患者・実施者・オーダー情報）
+    ME -&gt;&gt; 患者: 問診（症状・透析可否の最終確認）
+    ME -&gt;&gt; 患者: バイタルチェック
+    看護師 -&gt;&gt; 患者: 全身状態観察（意識・症状など）
+    ME -&gt;&gt; 透析管理システム: 透析前情報の記録
+    透析管理システム --&gt;&gt; 電子カルテ: 透析前情報連携
+    ME -&gt;&gt; ME: 透析機器（コンソール）設定
+    ME -&gt;&gt; 患者: 穿刺（シャント穿刺）
+    ME -&gt;&gt; ME: 透析条件最終確認（設定値・除水量）
+    ME -&gt;&gt; 患者: 回路接続・開始準備
+</pre>
+<h2>2. 透析実施〜終了・次回スケジュール調整</h2>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    actor 患者
+    actor 医師
+    actor 看護師T as 看護師（透析室）
+    actor 看護師W as 看護師（病棟）
+    actor ME as 臨床工学技士（ME）
+    participant 電子カルテ
+    participant 透析管理システム
+    participant 医事会計システム
+
+    Note over ME,患者: 【透析実施】透析室
+    Note over 医師: 透析中は必要時随時介入
+    ME -&gt;&gt; 患者: 透析実施開始
+    loop 透析中（都度確認）
+        ME -&gt;&gt; 患者: バイタルチェック
+        看護師T -&gt;&gt; 患者: 全身状態継続観察（主担当）
+        看護師T -&gt;&gt; 電子カルテ: 透析中経過記録（必要時）
+        alt バイタルサインの異常あり／指示変更の必要あり
+            par 医師への報告
+                ME -&gt;&gt; 医師: 医師に報告
+                医師 -&gt;&gt; 電子カルテ: 透析指示変更・登録（透析条件・方針の変更）
+                電子カルテ --&gt;&gt; 透析管理システム: 変更指示連携
+            and 初期対応
+                ME -&gt;&gt; 患者: 透析条件調整（除水停止・透析速度調整等）
+                看護師T -&gt;&gt; 患者: 初期対応（体位・酸素・観察）
+            end
+        else 異常なし
+            Note over ME: 透析継続
+        end
+        alt 検査・処置・処方オーダーが必要
+            医師 -&gt;&gt; 電子カルテ: 検査オーダー／処置オーダー／処方オーダー登録
+            Note over 電子カルテ: 各業務フローを参照
+        else オーダーなし
+            Note over 医師: 経過観察
+        end
+        Note over 医師,患者: 【状態確認・指示】透析中随時
+        医師 -&gt;&gt; 患者: 状態確認
+        医師 -&gt;&gt; 電子カルテ: 確認内容記録
+    end
+
+    Note over ME,患者: 【透析終了後処置】透析室（透析終了後）
+    ME -&gt;&gt; 患者: 透析終了
+    ME -&gt;&gt; 患者: 回路離脱
+    ME -&gt;&gt; 患者: 止血処置
+    看護師T -&gt;&gt; 患者: 止血確認（ダブルチェック）
+    看護師T -&gt;&gt; 患者: バイタル測定
+    看護師T -&gt;&gt; 患者: 状態評価
+    ME -&gt;&gt; 患者: 体重測定
+    ME -&gt;&gt; 患者: 穿刺部位観察（再出血リスク）
+    看護師T -&gt;&gt; 患者: 離床可否判断
+    看護師T -&gt;&gt; 電子カルテ: 終了後処置結果記録（バイタル・体重・状態評価等）
+
+    Note over ME,透析管理システム: 【実施情報登録】透析室（透析終了後）
+    ME -&gt;&gt; 透析管理システム: 実施情報登録
+    透析管理システム --&gt;&gt; 電子カルテ: 実施情報連携（ビューワー連携）
+    電子カルテ --&gt;&gt; 医師: 透析レポート通知
+    医師 -&gt;&gt; 電子カルテ: 透析レポート確認
+
+    Note over 看護師T,患者: 【搬送前最終確認】透析室
+    看護師T -&gt;&gt; 看護師T: 搬送前最終確認（止血・血圧・意識・ふらつき）
+
+    Note over 看護師T,看護師W: 【病棟申し送り（搬送直前）】透析室
+    看護師T -&gt;&gt; 看護師W: 申し送り（バイタル状態・低血圧の有無・出血リスク・搬送方法等）
+    ME -&gt;&gt; 看護師W: 補足情報（透析条件等）
+
+    Note over 看護師T,患者: 【患者移送】透析室→病室
+    看護師T -&gt;&gt; 患者: 患者移送（透析室→病室）
+    患者 -&gt;&gt; 患者: 病室到着
+
+    Note over 看護師T,看護師W: 【病棟申し送り（病室到着時）】病室
+    看護師T -&gt;&gt; 看護師W: 申し送り（透析条件・実績・透析中イベント・透析後状態・注意事項等）
+    ME -&gt;&gt; 看護師W: 補足情報（透析条件・実績等）
+
+    Note over ME,透析管理システム: 【次回スケジュール調整】透析室・ナースステーション（2回目以降）
+    alt 条件変更あり
+        医師 -&gt;&gt; ME: 次回透析条件指示
+    end
+    ME -&gt;&gt; 透析管理システム: 次回スケジュール調整・登録
+    透析管理システム --&gt;&gt; 電子カルテ: スケジュール連携
+
+    Note over 電子カルテ,医事会計システム: 【システム連携】
+    電子カルテ --&gt;&gt; 医事会計システム: 実施内容（コスト）連携（実施登録時）
+</pre>
+
+<hr>
+<h2>レビュー指摘メモ</h2>
+<table>
+  <thead><tr><th>日付</th><th>指摘内容</th><th>背景</th></tr></thead>
+  <tbody>
+    <tr><td>2026-05-28</td><td>電子カルテ側で管理すべき範囲と透析管理システム側で管理する範囲を整理し、フローの書きすぎている点を修正する</td><td>現在のフローでは透析管理システム内の詳細業務（穿刺・機器設定・除水条件等）まで電子カルテフローとして記載されており、システム境界が不明確になっている。電子カルテとの連携インターフェースに絞った記述に整理する必要がある</td></tr>
+  </tbody>
+</table>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+</body></html>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- NUnit テストフレームワーク -->
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <!-- dotnet test との統合アダプター -->
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <!-- dotnet test の実行ホスト（必須） -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <!-- モックライブラリ -->
+    <PackageReference Include="Moq" Version="4.20.72" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- メインプロジェクトへの参照 -->
+    <ProjectReference Include="..\KarteDomainService\KarteDomainService.csproj" />
+  </ItemGroup>
+
+</Project>

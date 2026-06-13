@@ -1,0 +1,56 @@
+graph TB
+    subgraph NextJS["Next.js Best Practices 統合"]
+        NBP["product/.agents/skills/next-best-practices/"]
+        NBP --> Route["route-handlers.md"]
+        NBP --> Data["data-patterns.md"]
+        NBP --> Async["async-patterns.md"]
+        NBP --> Functions["functions.md"]
+    end
+
+    Route --> Phase2["Phase 2: API層<br/>(BFF Route Handler)"]
+    Data --> Phase2
+    Async --> Phase2
+    Functions --> Phase2
+
+    Route --> Phase6["Phase 6: Page実装<br/>(Server Component)"]
+    Data --> Phase6
+    Async --> Phase6
+    Functions --> Phase6
+
+    subgraph Phase2Checks["Phase 2 チェック項目"]
+        P2C1["✓ BFF_BASE_URL vs NEXT_PUBLIC_BFF_BASE_URL"]
+        P2C2["✓ res.ok チェック必須"]
+        P2C3["✓ cookies/headers サーバー関数化"]
+        P2C4["✓ ParseEnumPipe + DefaultValuePipe"]
+    end
+
+    subgraph Phase6Checks["Phase 6 チェック項目"]
+        P6C1["✓ Server Component での環境変数"]
+        P6C2["✓ 'use client' 境界"]
+        P6C3["✓ シリアライズ可能な Props"]
+        P6C4["✓ redirect() を try-catch 外で実行"]
+    end
+
+    Phase2 --> Phase2Checks
+    Phase6 --> Phase6Checks
+
+    Phase2Checks --> Review2["impl-reviewer<br/>(Phase 2 完了時)"]
+    Phase6Checks --> Review6["impl-reviewer<br/>(Phase 6 完了時)"]
+
+    style NBP fill:#e1bee7
+    style Route fill:#c8e6c9
+    style Data fill:#c8e6c9
+    style Async fill:#c8e6c9
+    style Functions fill:#c8e6c9
+    style Phase2 fill:#fff9c4
+    style Phase6 fill:#fff9c4
+    style P2C1 fill:#ffccbc
+    style P2C2 fill:#ffccbc
+    style P2C3 fill:#ffccbc
+    style P2C4 fill:#ffccbc
+    style P6C1 fill:#ffccbc
+    style P6C2 fill:#ffccbc
+    style P6C3 fill:#ffccbc
+    style P6C4 fill:#ffccbc
+    style Review2 fill:#e1bee7
+    style Review6 fill:#e1bee7

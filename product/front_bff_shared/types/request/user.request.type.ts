@@ -1,0 +1,1 @@
+export interface UserGetRequest { id: string; }

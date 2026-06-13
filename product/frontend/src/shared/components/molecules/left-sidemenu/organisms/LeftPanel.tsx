@@ -1,0 +1,1582 @@
+'use client';
+import { useState } from 'react';
+import * as React from 'react';
+import { Search, Plus, Star, ChevronRight, ChevronDown } from 'lucide-react';
+import { Input } from '@/shared/components/atoms/input';
+import { Button } from '@/shared/components/atoms/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/atoms/tabs';
+import { ScrollArea } from '@/shared/components/atoms/scroll-area';
+import { Badge } from '@/shared/components/atoms/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/components/atoms/collapsible';
+import type { OrderItem, OrderSet } from '../../types/order.types';
+
+const mockHistoryByTab: Record<string, Array<{
+  date: string;
+  department: string;
+  complaint: string;
+  orders: OrderItem[];
+}>> = {
+  prescription: [
+    {
+      date: '2024-12-15',
+      department: '内科',
+      complaint: '風邪症状',
+      orders: [
+        { id: '1', name: 'カロナール錠200mg', dosage: '200mg', usage: '1日3回食後' },
+        { id: '2', name: 'ムコダイン錠250mg', dosage: '250mg', usage: '1日3回食後' },
+        { id: '3', name: 'フスコデ配合錠', dosage: '1錠', usage: '1日3回食後' }
+      ]
+    },
+    {
+      date: '2024-12-10',
+      department: '内科',
+      complaint: '胃痛',
+      orders: [
+        { id: '4', name: 'ガスター錠20mg', dosage: '20mg', usage: '1日2回食後' },
+        { id: '5', name: 'ムコスタ錠100mg', dosage: '100mg', usage: '1日3回食後' }
+      ]
+    },
+    {
+      date: '2024-12-05',
+      department: '内科',
+      complaint: '高血圧症',
+      orders: [
+        { id: '6', name: 'アムロジピン錠5mg', dosage: '5mg', usage: '1日1回朝食後' },
+        { id: '7', name: 'アンジオテンシン変換酵素阻害薬', dosage: '5mg', usage: '1日1回朝食後' }
+      ]
+    }
+  ],
+  injection: [
+    {
+      date: '2024-12-14',
+      department: '内科',
+      complaint: '脱水症状',
+      orders: [
+        { id: 'inj1', name: '生理食塩液500ml', dosage: '500ml', usage: '点滴静注 100ml/h' },
+        { id: 'inj2', name: 'ソルデム3A輸液500ml', dosage: '500ml', usage: '点滴静注 80ml/h' }
+      ]
+    },
+    {
+      date: '2024-12-12',
+      department: '救急科',
+      complaint: '急性疼痛',
+      orders: [
+        { id: 'inj3', name: 'ペンタジン注15mg', dosage: '15mg', usage: '筋肉内注射' },
+        { id: 'inj4', name: 'アタラックス-P注25mg', dosage: '25mg', usage: '筋肉内注射' }
+      ]
+    },
+    {
+      date: '2024-12-08',
+      department: '外科',
+      complaint: '術前管理',
+      orders: [
+        { id: 'inj5', name: 'ラクテック注500ml', dosage: '500ml', usage: '点滴静注 120ml/h' },
+        { id: 'inj6', name: 'メイロン注7%20ml', dosage: '20ml', usage: '静脈内注射' }
+      ]
+    }
+  ],
+  lab: [
+    {
+      date: '2024-12-13',
+      department: '内科',
+      complaint: '定期検査',
+      orders: [
+        { id: 'lab_ast', name: 'AST' },
+        { id: 'lab_alt', name: 'ALT' },
+        { id: 'lab_ggt', name: 'γ-GTP' },
+        { id: 'lab_tp', name: '総蛋白' },
+        { id: 'lab_alb', name: 'アルブミン' }
+      ]
+    },
+    {
+      date: '2024-12-11',
+      department: '内科',
+      complaint: '貧血検査',
+      orders: [
+        { id: 'lab_wbc', name: '白血球数' },
+        { id: 'lab_rbc', name: '赤血球数' },
+        { id: 'lab_hgb', name: 'ヘモグロビン' },
+        { id: 'lab_hct', name: 'ヘマトクリット' },
+        { id: 'lab_plt', name: '血小板数' }
+      ]
+    },
+    {
+      date: '2024-12-06',
+      department: '内科',
+      complaint: '感染症検査',
+      orders: [
+        { id: 'lab_crp', name: 'CRP' },
+        { id: 'lab_wbc', name: '白血球数' },
+        { id: 'lab_blood_culture', name: '血液培養' },
+        { id: 'lab_urine_culture', name: '尿培養' }
+      ]
+    }
+  ]
+};
+
+const mockOrderSets: Record<string, OrderSet[]> = {
+  prescription: [
+    {
+      id: 'cold-set',
+      name: '感冒セット',
+      items: [
+        { id: 'c1', name: 'カロナール錠200mg', dosage: '200mg', usage: '1日3回食後' },
+        { id: 'c2', name: 'ムコダイン錠250mg', dosage: '250mg', usage: '1日3回食後' },
+        { id: 'c3', name: 'フスコデ配合錠', dosage: '1錠', usage: '1日3回食後' }
+      ]
+    },
+    {
+      id: 'gastric-set',
+      name: '胃潰瘍セット',
+      items: [
+        { id: 'g1', name: 'ガスター錠20mg', dosage: '20mg', usage: '1日2回食後' },
+        { id: 'g2', name: 'ムコスタ錠100mg', dosage: '100mg', usage: '1日3回食後' }
+      ]
+    },
+    {
+      id: 'hypertension-set',
+      name: '高血圧治療セット',
+      items: [
+        { id: 'h1', name: 'アムロジピン錠5mg', dosage: '5mg', usage: '1日1回朝食後' },
+        { id: 'h2', name: 'エナラプリル錠5mg', dosage: '5mg', usage: '1日2回食後' }
+      ]
+    }
+  ],
+  injection: [
+    {
+      id: 'fluid-set',
+      name: '基本輸液セット',
+      items: [
+        { id: 'i1', name: '生理食塩液500ml', dosage: '500ml', usage: '点滴静注 100ml/h' },
+        { id: 'i2', name: 'ソルデム3A輸液500ml', dosage: '500ml', usage: '点滴静注 80ml/h' }
+      ]
+    },
+    {
+      id: 'pain-set',
+      name: '疼痛管理セット',
+      items: [
+        { id: 'p1', name: 'ペンタジン注15mg', dosage: '15mg', usage: '筋肉内注射' },
+        { id: 'p2', name: 'アタラックス-P注25mg', dosage: '25mg', usage: '筋肉内注射' }
+      ]
+    },
+    {
+      id: 'emergency-set',
+      name: '救急輸液セット',
+      items: [
+        { id: 'e1', name: 'ラクテック注500ml', dosage: '500ml', usage: '点滴静注 150ml/h' },
+        { id: 'e2', name: 'メイロン注7%20ml', dosage: '20ml', usage: '静脈内注射' }
+      ]
+    }
+  ],
+  lab: [
+    {
+      id: 'liver-set',
+      name: '肝機能パネル',
+      items: [
+        { id: 'lab_ast', name: 'AST' },
+        { id: 'lab_alt', name: 'ALT' },
+        { id: 'lab_ggt', name: 'γ-GTP' },
+        { id: 'lab_tbil', name: '総ビリルビン' },
+        { id: 'lab_alp', name: 'ALP' }
+      ]
+    },
+    {
+      id: 'cbc-set',
+      name: '血算パネル',
+      items: [
+        { id: 'lab_wbc', name: '白血球数' },
+        { id: 'lab_rbc', name: '赤血球数' },
+        { id: 'lab_hgb', name: 'ヘモグロビン' },
+        { id: 'lab_hct', name: 'ヘマトクリット' },
+        { id: 'lab_plt', name: '血小板数' }
+      ]
+    },
+    {
+      id: 'infection-set',
+      name: '感染症パネル',
+      items: [
+        { id: 'lab_crp', name: 'CRP' },
+        { id: 'lab_wbc', name: '白血球数' },
+        { id: 'lab_procalcitonin', name: 'プロカルシトニン' },
+        { id: 'lab_blood_culture', name: '血液培養' }
+      ]
+    },
+    {
+      id: 'diabetes-set',
+      name: '糖尿病パネル',
+      items: [
+        { id: 'lab_glu', name: '血糖' },
+        { id: 'lab_hba1c', name: 'HbA1c' },
+        { id: 'lab_ga', name: 'グリコアルブミン' },
+        { id: 'lab_urine_glucose', name: '尿糖' }
+      ]
+    }
+  ]
+};
+
+// 頻用オーダーのモックデータ（使用頻度付き）
+interface FrequentOrderItem extends OrderItem {
+  frequency: number; // 使用頻度（今月の使用回数）
+}
+
+// 検査項目カテゴリの定義（サブカテゴリ対応）
+interface LabSubcategory {
+  id: string;
+  name: string;
+  items: OrderItem[];
+}
+
+interface LabCategory {
+  id: string;
+  name: string;
+  subcategories?: LabSubcategory[];
+  items?: OrderItem[];
+}
+
+// 薬効カテゴリの定義（階層構造）
+interface DrugSubcategory {
+  id: string;
+  name: string;
+  description?: string;
+  drugs: (OrderItem & { formulation?: string; route?: string; indication?: string })[];
+}
+
+interface DrugCategory {
+  id: string;
+  name: string;
+  description?: string;
+  subcategories?: DrugSubcategory[];
+  drugs?: (OrderItem & { formulation?: string; route?: string; indication?: string })[];
+  isExpanded?: boolean;
+}
+
+// 検査項目のモックデータ
+const mockLabCategories: LabCategory[] = [
+  {
+    id: 'biochemistry',
+    name: '生化学検査',
+    subcategories: [
+      {
+        id: 'liver',
+        name: '肝機能',
+        items: [
+          { id: 'lab_ast', name: 'AST（GOT）' },
+          { id: 'lab_alt', name: 'ALT（GPT）' },
+          { id: 'lab_ggt', name: 'γ-GTP' },
+          { id: 'lab_ldh', name: 'LDH' },
+          { id: 'lab_alp', name: 'ALP' },
+          { id: 'lab_tp', name: '総蛋白（TP）' },
+          { id: 'lab_alb', name: 'アルブミン（Alb）' },
+          { id: 'lab_tbil', name: '総ビリルビン（T-Bil）' },
+          { id: 'lab_dbil', name: '直接ビリルビン（D-Bil）' },
+          { id: 'lab_che', name: 'コリンエステラーゼ（ChE）' },
+        ]
+      },
+      {
+        id: 'kidney',
+        name: '腎機能',
+        items: [
+          { id: 'lab_bun', name: '尿素窒素（BUN）' },
+          { id: 'lab_cre', name: 'クレアチニン（Cre）' },
+          { id: 'lab_ua', name: '尿酸（UA）' },
+          { id: 'lab_egfr', name: 'eGFR' },
+        ]
+      },
+      {
+        id: 'lipid',
+        name: '脂質',
+        items: [
+          { id: 'lab_tc', name: '総コレステロール（TC）' },
+          { id: 'lab_hdl', name: 'HDLコレステロール' },
+          { id: 'lab_ldl', name: 'LDLコレステロール' },
+          { id: 'lab_tg', name: '中性脂肪（TG）' },
+        ]
+      },
+      {
+        id: 'glucose',
+        name: '糖代謝',
+        items: [
+          { id: 'lab_glu', name: '血糖（Glu）' },
+          { id: 'lab_hba1c', name: 'HbA1c' },
+          { id: 'lab_ga', name: 'グリコアルブミン（GA）' },
+        ]
+      },
+      {
+        id: 'electrolyte',
+        name: '電解質',
+        items: [
+          { id: 'lab_na', name: 'ナトリウム（Na）' },
+          { id: 'lab_k', name: 'カリウム（K）' },
+          { id: 'lab_cl', name: 'クロール（Cl）' },
+          { id: 'lab_ca', name: 'カルシウム（Ca）' },
+          { id: 'lab_mg', name: 'マグネシウム（Mg）' },
+          { id: 'lab_p', name: 'リン（P）' },
+        ]
+      },
+      {
+        id: 'other_biochem',
+        name: 'その他',
+        items: [
+          { id: 'lab_amy', name: 'アミラーゼ（AMY）' },
+          { id: 'lab_cpk', name: 'CPK（CK）' },
+          { id: 'lab_nh3', name: 'アンモニア（NH3）' },
+          { id: 'lab_lactate', name: '乳酸' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hematology',
+    name: '血液検査',
+    subcategories: [
+      {
+        id: 'basic_cbc',
+        name: '基本項目',
+        items: [
+          { id: 'lab_wbc', name: '白血球数（WBC）' },
+          { id: 'lab_rbc', name: '赤血球数（RBC）' },
+          { id: 'lab_hgb', name: 'ヘモグロビン（Hb）' },
+          { id: 'lab_hct', name: 'ヘマトクリット（Ht）' },
+          { id: 'lab_plt', name: '血小板数（PLT）' },
+        ]
+      },
+      {
+        id: 'rbc_indices',
+        name: '赤血球指数',
+        items: [
+          { id: 'lab_mcv', name: 'MCV' },
+          { id: 'lab_mch', name: 'MCH' },
+          { id: 'lab_mchc', name: 'MCHC' },
+        ]
+      },
+      {
+        id: 'wbc_differential',
+        name: '白血球分画',
+        items: [
+          { id: 'lab_neut', name: '好中球（Neut）' },
+          { id: 'lab_lymph', name: 'リンパ球（Lymph）' },
+          { id: 'lab_mono', name: '単球（Mono）' },
+          { id: 'lab_eos', name: '好酸球（Eos）' },
+          { id: 'lab_baso', name: '好塩基球（Baso）' },
+        ]
+      },
+      {
+        id: 'other_hematology',
+        name: 'その他',
+        items: [
+          { id: 'lab_retic', name: '網状赤血球' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'coagulation',
+    name: '凝固検査',
+    items: [
+      { id: 'lab_pt', name: 'プロトロンビン時間（PT）' },
+      { id: 'lab_ptinr', name: 'PT-INR' },
+      { id: 'lab_aptt', name: '活性化部分トロンボプラスチン時間（APTT）' },
+      { id: 'lab_fib', name: 'フィブリノゲン（Fib）' },
+      { id: 'lab_ddimer', name: 'Dダイマー' },
+      { id: 'lab_fDP', name: 'FDP' },
+      { id: 'lab_at3', name: 'アンチトロンビンIII（AT-III）' },
+    ]
+  },
+  {
+    id: 'immunology',
+    name: '免疫・炎症',
+    items: [
+      { id: 'lab_crp', name: 'CRP' },
+      { id: 'lab_esr', name: '血沈（ESR）' },
+      { id: 'lab_procalcitonin', name: 'プロカルシトニン（PCT）' },
+      { id: 'lab_rf', name: 'リウマチ因子（RF）' },
+      { id: 'lab_ana', name: '抗核抗体（ANA）' },
+      { id: 'lab_aslo', name: 'ASO（ASLO）' },
+      { id: 'lab_igg', name: '免疫グロブリンG（IgG）' },
+      { id: 'lab_iga', name: '免疫グロブリンA（IgA）' },
+      { id: 'lab_igm', name: '免疫グロブリンM（IgM）' },
+      { id: 'lab_ige', name: '免疫グロブリンE（IgE）' },
+      { id: 'lab_c3', name: '補体C3' },
+      { id: 'lab_c4', name: '補体C4' },
+    ]
+  },
+  {
+    id: 'endocrine',
+    name: '内分泌検査',
+    subcategories: [
+      {
+        id: 'thyroid',
+        name: '甲状腺',
+        items: [
+          { id: 'lab_tsh', name: '甲状腺刺激ホルモン（TSH）' },
+          { id: 'lab_ft3', name: '遊離トリヨードサイロニン（FT3）' },
+          { id: 'lab_ft4', name: '遊離サイロキシン（FT4）' },
+          { id: 'lab_t3', name: 'トリヨードサイロニン（T3）' },
+          { id: 'lab_t4', name: 'サイロキシン（T4）' },
+        ]
+      },
+      {
+        id: 'adrenal',
+        name: '副腎皮質',
+        items: [
+          { id: 'lab_cortisol', name: 'コルチゾール' },
+          { id: 'lab_acth', name: 'ACTH' },
+        ]
+      },
+      {
+        id: 'gonad',
+        name: '性腺',
+        items: [
+          { id: 'lab_lh', name: '黄体形成ホルモン（LH）' },
+          { id: 'lab_fsh', name: '卵胞刺激ホルモン（FSH）' },
+          { id: 'lab_prolactin', name: 'プロラクチン' },
+          { id: 'lab_testosterone', name: 'テストステロン' },
+          { id: 'lab_estradiol', name: 'エストラジオール' },
+        ]
+      },
+      {
+        id: 'other_endocrine',
+        name: 'その他',
+        items: [
+          { id: 'lab_insulin', name: 'インスリン' },
+          { id: 'lab_cpeptide', name: 'Cペプチド' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'infection',
+    name: '感染症検査',
+    subcategories: [
+      {
+        id: 'hepatitis',
+        name: '肝炎ウイルス',
+        items: [
+          { id: 'lab_hbsag', name: 'HBs抗原' },
+          { id: 'lab_hbsab', name: 'HBs抗体' },
+          { id: 'lab_hcvab', name: 'HCV抗体' },
+          { id: 'lab_hcvrna', name: 'HCV-RNA' },
+        ]
+      },
+      {
+        id: 'hiv',
+        name: 'HIV',
+        items: [
+          { id: 'lab_hiv', name: 'HIV抗体' },
+        ]
+      },
+      {
+        id: 'syphilis',
+        name: '梅毒',
+        items: [
+          { id: 'lab_tpha', name: 'TPHA（梅毒）' },
+          { id: 'lab_rpr', name: 'RPR（梅毒）' },
+        ]
+      },
+      {
+        id: 'other_infection',
+        name: 'その他',
+        items: [
+          { id: 'lab_influenza', name: 'インフルエンザ抗原' },
+          { id: 'lab_covid', name: 'COVID-19抗原' },
+          { id: 'lab_strep', name: '溶連菌抗原' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'tumor_marker',
+    name: '腫瘍マーカー',
+    items: [
+      { id: 'lab_cea', name: 'CEA（消化器系）' },
+      { id: 'lab_afp', name: 'AFP（肝臓）' },
+      { id: 'lab_ca199', name: 'CA19-9（膵臓・胆道）' },
+      { id: 'lab_ca125', name: 'CA125（卵巣）' },
+      { id: 'lab_ca153', name: 'CA15-3（乳腺）' },
+      { id: 'lab_psa', name: 'PSA（前立腺）' },
+      { id: 'lab_cyfra', name: 'シフラ（肺）' },
+      { id: 'lab_scc', name: 'SCC（扁平上皮癌）' },
+      { id: 'lab_nse', name: 'NSE（神経系）' },
+      { id: 'lab_progastrin', name: 'ProGRP（肺小細胞癌）' },
+    ]
+  },
+  {
+    id: 'cardiac',
+    name: '心臓マーカー',
+    items: [
+      { id: 'lab_troponin', name: 'トロポニンI' },
+      { id: 'lab_troponint', name: 'トロポニンT' },
+      { id: 'lab_bnp', name: 'BNP' },
+      { id: 'lab_ntprobnp', name: 'NT-proBNP' },
+      { id: 'lab_ckmb', name: 'CK-MB' },
+      { id: 'lab_myoglobin', name: 'ミオグロビン' },
+    ]
+  },
+  {
+    id: 'urine',
+    name: '尿検査',
+    subcategories: [
+      {
+        id: 'qualitative',
+        name: '定性',
+        items: [
+          { id: 'lab_urine_protein', name: '尿蛋白' },
+          { id: 'lab_urine_glucose', name: '尿糖' },
+          { id: 'lab_urine_occult', name: '尿潜血' },
+          { id: 'lab_urine_ketone', name: 'ケトン体' },
+          { id: 'lab_urine_bilirubin', name: 'ビリルビン' },
+          { id: 'lab_urine_urobilinogen', name: 'ウロビリノーゲン' },
+          { id: 'lab_urine_ph', name: 'pH' },
+          { id: 'lab_urine_sg', name: '比重' },
+        ]
+      },
+      {
+        id: 'sediment',
+        name: '沈渣',
+        items: [
+          { id: 'lab_sediment', name: '尿沈渣' },
+        ]
+      },
+      {
+        id: 'quantitative',
+        name: '定量',
+        items: [
+          { id: 'lab_urine_protein_quant', name: '尿蛋白定量' },
+          { id: 'lab_urine_alb', name: '尿中アルブミン' },
+          { id: 'lab_urine_nag', name: '尿中NAG' },
+          { id: 'lab_urine_beta2mg', name: '尿中β2ミクログロブリン' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'other',
+    name: 'その他',
+    items: [
+      { id: 'lab_blood_type', name: '血液型（ABO/Rh）' },
+      { id: 'lab_crossmatch', name: '交差適合試験' },
+      { id: 'lab_stool_occult', name: '便潜血' },
+      { id: 'lab_hp', name: 'ヘリコバクターピロリ' },
+      { id: 'lab_blood_culture', name: '血液培養' },
+      { id: 'lab_urine_culture', name: '尿培養' },
+    ]
+  }
+];
+
+// 薬効カテゴリのモックデータ（階層構造）
+const mockDrugCategories: DrugCategory[] = [
+  {
+    id: 'antihypertensive',
+    name: '降圧薬',
+    description: '高血圧症の治療',
+    isExpanded: false,
+    subcategories: [
+      {
+        id: 'ace_inhibitors',
+        name: 'ACE阻害薬',
+        description: 'アンジオテンシン変換酵素阻害薬',
+        drugs: [
+          { id: 'drug_enalapril', name: 'エナラプリル錠5mg', dosage: '5mg', usage: '1日2回食後', formulation: '錠剤', route: '経口', indication: '高血圧・心不全' },
+          { id: 'drug_captopril', name: 'カプトプリル錠25mg', dosage: '25mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '高血圧・心不全' }
+        ]
+      },
+      {
+        id: 'calcium_channel_blockers',
+        name: 'カルシウム拮抗薬',
+        description: 'カルシウムチャネル阻害薬',
+        drugs: [
+          { id: 'drug_amlodipine', name: 'アムロジピン錠5mg', dosage: '5mg', usage: '1日1回朝食後', formulation: '錠剤', route: '経口', indication: '高血圧・狭心症' },
+          { id: 'drug_nifedipine', name: 'ニフェジピン錠10mg', dosage: '10mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '高血圧・狭心症' }
+        ]
+      },
+      {
+        id: 'arb',
+        name: 'ARB',
+        description: 'アンジオテンシンII受容体拮抗薬',
+        drugs: [
+          { id: 'drug_losartan', name: 'ロサルタン錠50mg', dosage: '50mg', usage: '1日1回朝食後', formulation: '錠剤', route: '経口', indication: '高血圧' },
+          { id: 'drug_valsartan', name: 'バルサルタン錠80mg', dosage: '80mg', usage: '1日1回朝食後', formulation: '錠剤', route: '経口', indication: '高血圧' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'antibiotics',
+    name: '抗菌薬',
+    description: '細菌感染症の治療',
+    isExpanded: false,
+    subcategories: [
+      {
+        id: 'penicillins',
+        name: 'ペニシリン系',
+        description: 'ペニシリン系抗菌薬',
+        drugs: [
+          { id: 'drug_amoxicillin', name: 'サワシリン錠250mg', dosage: '250mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '細菌感染症' },
+          { id: 'drug_ampicillin', name: 'アンピシリン錠250mg', dosage: '250mg', usage: '1日4回食間', formulation: '錠剤', route: '経口', indication: '細菌感染症' }
+        ]
+      },
+      {
+        id: 'cephalosporins',
+        name: 'セフェム系',
+        description: 'セフェム系抗菌薬',
+        drugs: [
+          { id: 'drug_cefdinir', name: 'セフゾン錠100mg', dosage: '100mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '細菌感染症' },
+          { id: 'drug_cefcapene', name: 'フロモックス錠100mg', dosage: '100mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '細菌感染症' }
+        ]
+      },
+      {
+        id: 'quinolones',
+        name: 'キノロン系',
+        description: 'キノロン系抗菌薬',
+        drugs: [
+          { id: 'drug_levofloxacin', name: 'クラビット錠500mg', dosage: '500mg', usage: '1日1回食後', formulation: '錠剤', route: '経口', indication: '細菌感染症' },
+          { id: 'drug_ciprofloxacin', name: 'シプロキサン錠200mg', dosage: '200mg', usage: '1日2回食後', formulation: '錠剤', route: '経口', indication: '細菌感染症' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'analgesics',
+    name: '鎮痛薬',
+    description: '疼痛・発熱の治療',
+    isExpanded: false,
+    subcategories: [
+      {
+        id: 'nsaids',
+        name: 'NSAIDs',
+        description: '非ステロイド性抗炎症薬',
+        drugs: [
+          { id: 'drug_loxoprofen', name: 'ロキソニン錠60mg', dosage: '60mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '疼痛・発熱・炎症' },
+          { id: 'drug_diclofenac', name: 'ボルタレン錠25mg', dosage: '25mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '炎症・疼痛' }
+        ]
+      },
+      {
+        id: 'acetaminophen',
+        name: 'アセトアミノフェン系',
+        description: 'アセトアミノフェン製剤',
+        drugs: [
+          { id: 'drug_acetaminophen', name: 'カロナール錠200mg', dosage: '200mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '発熱・疼痛' },
+          { id: 'drug_acetaminophen_500', name: 'カロナール錠500mg', dosage: '500mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '発熱・疼痛' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'gastric',
+    name: '消化器用薬',
+    description: '胃腸症状の改善',
+    isExpanded: false,
+    drugs: [
+      { id: 'drug_famotidine', name: 'ガスター錠20mg', dosage: '20mg', usage: '1日2回食後', formulation: '錠剤', route: '経口', indication: '胃潰瘍・胃炎' },
+      { id: 'drug_rebamipide', name: 'ムコスタ錠100mg', dosage: '100mg', usage: '1日3回食後', formulation: '錠剤', route: '経口', indication: '胃炎・胃潰瘍' },
+      { id: 'drug_lansoprazole', name: 'タケプロン錠30mg', dosage: '30mg', usage: '1日1回朝食前', formulation: '錠剤', route: '経口', indication: '胃潰瘍・逆流性食道炎' }
+    ]
+  },
+  {
+    id: 'diabetes',
+    name: '糖尿病用薬',
+    description: '血糖コントロール',
+    isExpanded: false,
+    drugs: [
+      { id: 'drug_metformin', name: 'メトグルコ錠250mg', dosage: '250mg', usage: '1日2回食後', formulation: '錠剤', route: '経口', indication: '2型糖尿病' },
+      { id: 'drug_glimepiride', name: 'アマリール錠1mg', dosage: '1mg', usage: '1日1回朝食前', formulation: '錠剤', route: '経口', indication: '2型糖尿病' }
+    ]
+  }
+];
+
+const mockFrequentOrders: Record<string, FrequentOrderItem[]> = {
+  prescription: [
+    { id: 'f1', name: 'カロナール錠200mg', dosage: '200mg', usage: '1日3回食後', frequency: 45 },
+    { id: 'f2', name: 'ロキソニン錠60mg', dosage: '60mg', usage: '1日3回食後', frequency: 38 },
+    { id: 'f3', name: 'ガスター錠20mg', dosage: '20mg', usage: '1日2回食後', frequency: 32 },
+    { id: 'f4', name: 'アムロジピン錠5mg', dosage: '5mg', usage: '1日1回朝食後', frequency: 28 },
+    { id: 'f5', name: 'フロモックス錠100mg', dosage: '100mg', usage: '1日3回食後', frequency: 24 },
+    { id: 'f6', name: 'ムコダイン錠250mg', dosage: '250mg', usage: '1日3回食後', frequency: 20 }
+  ],
+  injection: [
+    { id: 'fi1', name: '生理食塩液500ml', dosage: '500ml', usage: '点滴静注 100ml/h', frequency: 52 },
+    { id: 'fi2', name: 'ソルデム3A輸液500ml', dosage: '500ml', usage: '点滴静注 80ml/h', frequency: 38 },
+    { id: 'fi3', name: 'ラクテック注500ml', dosage: '500ml', usage: '点滴静注 120ml/h', frequency: 28 },
+    { id: 'fi4', name: 'ペンタジン注15mg', dosage: '15mg', usage: '筋肉内注射', frequency: 22 },
+    { id: 'fi5', name: 'メイロン注7%20ml', dosage: '20ml', usage: '静脈内注射', frequency: 16 },
+    { id: 'fi6', name: 'アタラックス-P注25mg', dosage: '25mg', usage: '筋肉内注射', frequency: 12 }
+  ],
+  lab: [
+    { id: 'fl1', name: 'CRP', frequency: 68 },
+    { id: 'fl2', name: '白血球数', frequency: 65 },
+    { id: 'fl3', name: 'AST', frequency: 58 },
+    { id: 'fl4', name: 'ALT', frequency: 58 },
+    { id: 'fl5', name: 'ヘモグロビン', frequency: 52 },
+    { id: 'fl6', name: '血小板数', frequency: 48 },
+    { id: 'fl7', name: '血糖', frequency: 42 },
+    { id: 'fl8', name: 'γ-GTP', frequency: 35 }
+  ]
+};
+
+interface LeftPanelProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  onAddCandidate: (item: OrderItem & { source?: string }) => void;
+  onAddMultipleCandidates: (items: (OrderItem & { source?: string })[]) => void;
+  // 検体オーダー用の直接追加機能
+  onAddToDetail?: (item: OrderItem) => void;
+  onAddMultipleToDetail?: (items: OrderItem[]) => void;
+  // サブタブの外部状態管理
+  activeSubTab?: string;
+  onSubTabChange?: (subTab: string) => void;
+  // セットからのオーダー追加
+  onAddSetOrders?: (setData: { id: string; name: string; items: string[]; type: 'my-set' | 'composite-set' }) => void;
+  // T6-2: BFF から取得した実データ（未取得の場合はモックにフォールバック）
+  apiHistoryByTab?: Record<string, Array<{ date: string; department: string; complaint: string; orders: OrderItem[] }>>;
+  apiSetsByTab?: Record<string, OrderSet[]>;
+}
+
+export function LeftPanel({ 
+  activeTab,
+  onTabChange,
+  onAddCandidate,
+  onAddMultipleCandidates,
+  onAddToDetail,
+  onAddMultipleToDetail,
+  activeSubTab: externalActiveSubTab,
+  onSubTabChange: externalOnSubTabChange,
+  onAddSetOrders,
+  apiHistoryByTab,
+  apiSetsByTab,
+}: LeftPanelProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedHistory, setSelectedHistory] = useState<string | null>(null);
+  
+  // 外部からactiveSubTabが渡される場合はそれを使用、そうでなければ内部状態を使用
+  const [internalActiveSubTab, setInternalActiveSubTab] = useState('history');
+  const activeSubTab = externalActiveSubTab ?? internalActiveSubTab;
+  const setActiveSubTab = externalOnSubTabChange ?? setInternalActiveSubTab;
+
+  // T6-2: BFF 取得データを優先、未取得時はモックにフォールバック
+  const historyByTab = (apiHistoryByTab?.[activeTab]?.length ?? 0) > 0
+    ? apiHistoryByTab![activeTab]
+    : mockHistoryByTab[activeTab] ?? [];
+  const orderSets = (apiSetsByTab?.[activeTab]?.length ?? 0) > 0
+    ? apiSetsByTab![activeTab]
+    : mockOrderSets[activeTab] ?? [];
+
+  // 薬効分類の状態管理
+  const [drugCategories, setDrugCategories] = useState<DrugCategory[]>(mockDrugCategories);
+  const [selectedCategory, setSelectedCategory] = useState<DrugCategory | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<DrugSubcategory | null>(null);
+  
+  // 検査項目カテゴリの展開状態管理
+  const [expandedLabCategories, setExpandedLabCategories] = useState<{[key: string]: boolean}>({});
+
+  const handleAddItem = (item: OrderItem, source: string) => {
+    onAddCandidate({ ...item, source });
+  };
+
+  const handleAddSet = (set: OrderSet) => {
+    // セットを1つのグループとして候補に追加
+    const groupItem = {
+      id: `set-group-${set.id}-${Date.now()}`,
+      name: set.name,
+      type: activeTab as 'prescription' | 'injection' | 'lab',
+      source: 'set' as const,
+      groupItems: set.items.map(item => ({ ...item, source: 'set', type: activeTab as 'prescription' | 'injection' | 'lab' }))
+    };
+    onAddCandidate(groupItem);
+  };
+
+  const handleAddHistory = (history: typeof mockHistoryByTab.prescription[0]) => {
+    // 履歴を1つのグループとして候補に追加
+    const filteredOrders = history.orders.filter(order => {
+      return true;
+    });
+    const groupItem = {
+      id: `history-group-${history.date}-${Date.now()}`,
+      name: history.complaint, // 日付を除外し、主訴のみ表示
+      date: history.date, // 中央ペインで表示するための日付情報
+      type: activeTab as 'prescription' | 'injection' | 'lab',
+      source: 'history' as const,
+      groupItems: filteredOrders.map(order => ({ ...order, source: 'history', type: activeTab as 'prescription' | 'injection' | 'lab' }))
+    };
+    onAddCandidate(groupItem);
+  };
+
+  const handleSubTabChange = (newSubTab: string) => {
+    setActiveSubTab(newSubTab);
+    // サブタブ変更時に状態をリセット
+    setSearchQuery('');
+    setSelectedHistory(null);
+  };
+
+  // オーダー種別に応じたデフォルトタブを設定
+  const getDefaultSubTab = () => {
+    if (activeTab === 'lab') {
+      return 'search'; // 検査項目を最初に表示
+    } else if (activeTab === 'prescription') {
+      return 'search'; // 薬剤を最初に表示
+    }
+    return 'history';
+  };
+
+  // アクティブタブが変更されたときにサブタブもリセット
+  React.useEffect(() => {
+    setActiveSubTab(getDefaultSubTab());
+  }, [activeTab]);
+
+  // 検体オーダー用の検査項目を直接オーダーリストに追加
+  const handleAddLabItem = (item: OrderItem) => {
+    if (onAddToDetail) {
+      // 直接オーダーリストに追加（itemCodeを保持）
+      onAddToDetail({ 
+        ...item, 
+        type: 'lab',
+        itemCode: item.itemCode || item.id // 元の項目コードを保持
+      });
+    }
+  };
+  
+  // 検査カテゴリの展開/折りたたみ
+  const toggleLabCategory = (categoryId: string) => {
+    setExpandedLabCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
+  // 検体オーダー用のセット直接追加
+  const handleAddLabSet = (set: OrderSet) => {
+    if (onAddMultipleToDetail) {
+      const groupId = `set-${set.id}-${Date.now()}`;
+      const labItems = set.items.map(item => ({ 
+        ...item, 
+        type: 'lab' as const,
+        groupId: groupId,
+        groupName: set.name,
+        groupType: 'set' as const
+      }));
+      onAddMultipleToDetail(labItems);
+    }
+  };
+
+  // 検体オーダー用の頻用項目直接追加
+  const handleAddLabFrequentItem = (item: FrequentOrderItem) => {
+    if (onAddToDetail) {
+      onAddToDetail({ ...item, type: 'lab' });
+    }
+  };
+
+  // 処方オーダー用の薬剤直接追加
+  const handleAddDrugItem = (item: OrderItem) => {
+    if (onAddToDetail) {
+      onAddToDetail({ ...item, type: 'prescription' });
+    }
+  };
+
+  // 処方オーダー用のセット直接追加
+  const handleAddDrugSet = (set: OrderSet) => {
+    if (onAddMultipleToDetail) {
+      const groupId = `set-${set.id}-${Date.now()}`;
+      const drugItems = set.items.map(item => ({ 
+        ...item, 
+        type: 'prescription' as const,
+        groupId: groupId,
+        groupName: set.name,
+        groupType: 'set' as const
+      }));
+      onAddMultipleToDetail(drugItems);
+    }
+  };
+
+  // 処方オーダー用の頻用項目直接追加
+  const handleAddDrugFrequentItem = (item: FrequentOrderItem) => {
+    if (onAddToDetail) {
+      onAddToDetail({ ...item, type: 'prescription' });
+    }
+  };
+
+  // 薬効分類の展開/折りたたみ
+  const toggleCategoryExpansion = (categoryId: string) => {
+    setDrugCategories(prev =>
+      prev.map(cat =>
+        cat.id === categoryId ? { ...cat, isExpanded: !cat.isExpanded } : cat
+      )
+    );
+  };
+
+  // 薬効分類選択
+  const handleCategorySelect = (category: DrugCategory) => {
+    setSelectedCategory(category);
+    setSelectedSubcategory(null);
+  };
+
+  // サブカテゴリ選択
+  const handleSubcategorySelect = (subcategory: DrugSubcategory) => {
+    setSelectedSubcategory(subcategory);
+  };
+
+  // サブタブの内容をレンダリングする関数
+  const renderSubTabContent = () => {
+    switch (activeSubTab) {
+      case 'history':
+        return (
+          <div className="p-4">
+            <h3 className="mb-3">診療履歴</h3>
+            <div className="mb-2 text-xs text-muted-foreground">
+              履歴をクリックでグループを候補に追加
+            </div>
+            <div className="space-y-2">
+              {historyByTab.map((history, index) => (
+                <div
+                  key={index}
+                  className="p-2 rounded border cursor-pointer transition-colors border-border hover:bg-accent group"
+                  onClick={() => handleAddHistory(history)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm">{history.date}</span>
+                        <span className="text-xs text-muted-foreground">{history.department}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground mb-2">{history.complaint}</div>
+                      
+                      {/* オーダー概要表示 */}
+                      <div className="text-xs text-muted-foreground">
+                        <div className="font-medium mb-1">オーダー内容:</div>
+                        {history.orders.map((order, orderIndex) => (
+                          <div key={order.id} className="ml-2">
+                            • {order.name} {order.dosage && activeTab !== 'lab' ? `(${order.dosage})` : ''}
+                          </div>
+                        ))}
+                        <div className="mt-2 text-primary group-hover:text-primary/80">
+                          {history.orders.length}件のオーダーを候補に追加
+                        </div>
+                      </div>
+                    </div>
+                    <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Plus className="w-4 h-4 text-primary" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'sets':
+        return (
+          <div className="p-4">
+            <h3 className="mb-3">オーダーセット</h3>
+            <div className="mb-2 text-xs text-muted-foreground">
+              {isDirectMode ? 'セットをクリックで直接オーダーリストに追加' : 'セットをクリックでグループを候補に追加'}
+            </div>
+            <div className={`${isDirectMode ? 'grid grid-cols-2 gap-2' : 'space-y-2'}`}>
+              {orderSets.map((set) => (
+                <div 
+                  key={set.id} 
+                  className="p-2 rounded border border-border hover:bg-accent cursor-pointer group"
+                  onClick={() => isDirectMode ? (activeTab === 'lab' ? handleAddLabSet(set) : handleAddDrugSet(set)) : handleAddSet(set)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="text-sm">{set.name}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {set.items.length}項目のセット
+                      </div>
+                      <div className="text-xs text-primary group-hover:text-primary/80 mt-1">
+                        {isDirectMode ? `${set.items.length}件を直接オーダーリストに追加` : `${set.items.length}件のオーダーを候補に追加`}
+                      </div>
+                    </div>
+                    <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Plus className="w-4 h-4 text-primary" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'category':
+        // 処方オーダーの薬効検索機能（2エリア構成）
+        if (activeTab === 'prescription') {
+          return (
+            <div className="flex h-full">
+              {/* 左側：薬効分類ツリー */}
+              <div className="w-60 border-r border-border bg-card">
+                <div className="p-3 border-b border-border">
+                  <h3 className="text-sm font-medium">薬効分類</h3>
+                </div>
+                <ScrollArea className="h-full">
+                  <div className="p-2">
+                    {drugCategories.map((category) => (
+                      <div key={category.id} className="mb-2">
+                        <div
+                          className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors text-sm ${
+                            selectedCategory?.id === category.id ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
+                          }`}
+                          onClick={() => handleCategorySelect(category)}
+                        >
+                          {category.subcategories && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCategoryExpansion(category.id);
+                              }}
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              {category.isExpanded ? (
+                                <ChevronDown className="w-4 h-4" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                          <div className="flex-1">
+                            <div className="font-medium">{category.name}</div>
+                            <div className="text-xs text-muted-foreground">{category.description}</div>
+                          </div>
+                        </div>
+
+                        {/* サブカテゴリ */}
+                        {category.isExpanded && category.subcategories && (
+                          <div className="ml-6 mt-1 space-y-1">
+                            {category.subcategories.map((subcategory) => (
+                              <div
+                                key={subcategory.id}
+                                className={`p-2 rounded cursor-pointer transition-colors text-xs ${
+                                  selectedSubcategory?.id === subcategory.id 
+                                    ? 'bg-primary/20 text-primary' 
+                                    : 'hover:bg-accent'
+                                }`}
+                                onClick={() => handleSubcategorySelect(subcategory)}
+                              >
+                                <div className="font-medium">{subcategory.name}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {subcategory.description} ({subcategory.drugs.length}剤)
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+
+              {/* 右側：薬剤一覧 */}
+              <div className="flex-1 bg-background">
+                <div className="p-3 border-b border-border">
+                  <h3 className="text-sm font-medium">薬剤一覧</h3>
+                  {selectedSubcategory ? (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedCategory?.name} &gt; {selectedSubcategory.name}
+                    </p>
+                  ) : selectedCategory ? (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedCategory.name}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      左側の薬効分類から選択してください
+                    </p>
+                  )}
+                </div>
+                <ScrollArea className="h-full">
+                  <div className="p-3">
+                    {!selectedCategory ? (
+                      <div className="text-center text-muted-foreground py-8">
+                        <div className="text-sm">薬効分類を選択してください</div>
+                      </div>
+                    ) : selectedSubcategory ? (
+                      // サブカテゴリが選択さ��た場合はその薬剤を表示
+                      <div className="space-y-3">
+                        {selectedSubcategory.drugs.map((drug) => (
+                          <div
+                            key={drug.id}
+                            className="p-3 border border-border rounded-lg hover:bg-accent transition-colors"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h4 className="text-sm font-medium">{drug.name}</h4>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {selectedSubcategory.name}
+                                  </Badge>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                  <div>規格: {drug.dosage}</div>
+                                  <div>剤形: {drug.formulation}</div>
+                                  <div>用法: {drug.usage}</div>
+                                  <div>経路: {drug.route}</div>
+                                  <div className="col-span-2">適応: {drug.indication}</div>
+                                </div>
+                              </div>
+                              
+                              <Button
+                                size="sm"
+                                onClick={() => handleAddDrugItem({ ...drug, source: 'category' })}
+                                className="ml-4"
+                              >
+                                <Plus className="w-4 h-4 mr-1" />
+                                追加
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      // カテゴリのみ選択された場合
+                      <div className="space-y-4">
+                        {selectedCategory.subcategories ? (
+                          // サブカテゴリがある場合は全サブカテゴリの薬剤を表示
+                          selectedCategory.subcategories.map((subcategory) => (
+                            <div key={subcategory.id}>
+                              <h4 className="text-sm font-medium mb-2 text-primary">
+                                {subcategory.name} ({subcategory.drugs.length}剤)
+                              </h4>
+                              <div className="space-y-2">
+                                {subcategory.drugs.map((drug) => (
+                                  <div
+                                    key={drug.id}
+                                    className="p-2 border border-border rounded hover:bg-accent transition-colors"
+                                  >
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <div className="text-sm font-medium">{drug.name}</div>
+                                        <div className="text-xs text-muted-foreground">
+                                          {drug.dosage} - {drug.usage} - {drug.route}
+                                        </div>
+                                        <div className="text-xs text-blue-600 mt-1">
+                                          {drug.indication}
+                                        </div>
+                                      </div>
+                                      
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleAddDrugItem({ ...drug, source: 'category' })}
+                                        className="ml-2"
+                                      >
+                                        <Plus className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        ) : selectedCategory.drugs ? (
+                          // 直接薬剤がある場合
+                          <div className="space-y-2">
+                            {selectedCategory.drugs.map((drug) => (
+                              <div
+                                key={drug.id}
+                                className="p-3 border border-border rounded-lg hover:bg-accent transition-colors"
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="text-sm font-medium">{drug.name}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {drug.dosage} - {drug.usage} - {drug.route}
+                                    </div>
+                                    <div className="text-xs text-blue-600 mt-1">
+                                      {drug.indication}
+                                    </div>
+                                  </div>
+                                  
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleAddDrugItem({ ...drug, source: 'category' })}
+                                    className="ml-4"
+                                  >
+                                    <Plus className="w-4 h-4 mr-1" />
+                                    追加
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          );
+        }
+        return null;
+
+      case 'search':
+        // 検体オーダーの場合は検査項目パネル表示
+        if (activeTab === 'lab') {
+          return (
+            <div className="p-4">
+              <h3 className="mb-3">検査項目</h3>
+              
+              {/* 検索フィールド */}
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="検査名を入力"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* 検索結果（入力時） */}
+              {searchQuery.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="text-sm mb-2">検索結果</h4>
+                  <div className={`${isDirectMode ? 'grid grid-cols-3 gap-2' : 'space-y-2'}`}>
+                    {[
+                      { id: 'search-1', name: `${searchQuery}` },
+                      { id: 'search-2', name: `${searchQuery}定量` },
+                      { id: 'search-3', name: `${searchQuery}定性` }
+                    ].map((item, index) => (
+                      <div key={index} className="p-2 rounded border border-border hover:bg-accent group">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="text-sm">{item.name}</div>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="ml-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleAddLabItem({ ...item, source: 'search' })}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 検査項目カテゴリ別パネル */}
+              <div className="space-y-2">
+                <h4 className="text-sm">検査項目一覧</h4>
+                <div className="space-y-2">
+                  {mockLabCategories.map((category) => (
+                    <Collapsible
+                      key={category.id}
+                      open={expandedLabCategories[category.id]}
+                      onOpenChange={() => toggleLabCategory(category.id)}
+                    >
+                      <div className="border rounded-lg overflow-hidden">
+                        <CollapsibleTrigger className="w-full p-3 bg-muted/30 hover:bg-muted/50 transition-colors flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {expandedLabCategories[category.id] ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                            <h5 className="text-sm font-medium">{category.name}</h5>
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            {category.subcategories 
+                              ? category.subcategories.reduce((sum, sub) => sum + sub.items.length, 0)
+                              : category.items?.length || 0}項目
+                          </Badge>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          {category.subcategories ? (
+                            // サブカテゴリがある場合
+                            <div className="p-2 space-y-2">
+                              {category.subcategories.map((subcat) => (
+                                <div key={subcat.id}>
+                                  <div className="text-xs text-muted-foreground mb-1 px-1">
+                                    {subcat.name}
+                                  </div>
+                                  <div className="grid gap-1.5 grid-cols-2">
+                                    {subcat.items.map((item) => (
+                                      <Button
+                                        key={item.id}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 justify-start text-xs hover:bg-primary hover:text-primary-foreground"
+                                        onClick={() => handleAddLabItem({ 
+                                          ...item, 
+                                          source: 'search',
+                                          subcategory: subcat.id,
+                                          subcategoryName: subcat.name
+                                        })}
+                                      >
+                                        {item.name}
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            // サブカテゴリがない場合
+                            <div className="p-2 grid gap-1.5 grid-cols-2">
+                              {category.items?.map((item) => (
+                                <Button
+                                  key={item.id}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 justify-start text-xs hover:bg-primary hover:text-primary-foreground"
+                                  onClick={() => handleAddLabItem({ ...item, source: 'search' })}
+                                >
+                                  {item.name}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
+                        </CollapsibleContent>
+                      </div>
+                    </Collapsible>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // 処方オーダーの場合は直接入力モード対応
+        if (activeTab === 'prescription') {
+          return (
+            <div className="p-4">
+              <h3 className="mb-3">薬剤検索</h3>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="薬剤名を入力（3文字以上）"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              {/* 検索結果（入力時） */}
+              {searchQuery.length >= 3 && (
+                <div className="mb-4">
+                  <h4 className="text-sm mb-2">検索結果</h4>
+                  <div className={`${isDirectMode ? 'grid grid-cols-2 gap-2' : 'space-y-2'}`}>
+                    {[
+                      { id: 'search-1', name: `${searchQuery}錠200mg`, dosage: '200mg', usage: '1日3回食後' },
+                      { id: 'search-2', name: `${searchQuery}散50%`, dosage: '0.5g', usage: '1日2回食後' },
+                      { id: 'search-3', name: `${searchQuery}注射液10mg`, dosage: '10mg', usage: '静脈内投与' },
+                      { id: 'search-4', name: `${searchQuery}カプセル100mg`, dosage: '100mg', usage: '1日2回食後' },
+                      { id: 'search-5', name: `${searchQuery}シロップ1%`, dosage: '5ml', usage: '1日3回食後' },
+                      { id: 'search-6', name: `${searchQuery}貼付剤40mg`, dosage: '40mg', usage: '1日1回貼付' }
+                    ].map((item, index) => (
+                      <div key={index} className="p-2 rounded border border-border hover:bg-accent group">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="text-sm">{item.name}</div>
+                            {item.dosage && (
+                              <div className="text-xs text-muted-foreground">
+                                {item.dosage} {item.usage}
+                              </div>
+                            )}
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="ml-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => isDirectMode ? handleAddDrugItem({ ...item, source: 'search' }) : handleAddItem(item, 'search')}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 薬剤一覧（常時表示） */}
+              <div className="space-y-4">
+                <h4 className="text-sm">薬剤一覧</h4>
+                <div className={`gap-4 ${isDirectMode ? 'grid grid-cols-2' : 'space-y-4'}`}>
+                  {drugCategories.map((category) => (
+                    <div key={category.id} className="border rounded-lg">
+                      <div className="p-3 bg-muted/30 border-b">
+                        <h5 className="text-sm">{category.name}</h5>
+                      </div>
+                      <div className="p-2 grid gap-2 grid-cols-1">
+                        {(category.drugs || (category.subcategories?.flatMap(sub => sub.drugs) || [])).map((item) => (
+                          <Button
+                            key={item.id}
+                            variant="ghost"
+                            size="sm"
+                            className="h-10 justify-start text-xs hover:bg-primary hover:text-primary-foreground flex flex-col items-start p-2"
+                            onClick={() => isDirectMode ? handleAddDrugItem({ ...item, source: 'search' }) : handleAddItem(item, 'search')}
+                          >
+                            <div className="font-medium">{item.name}</div>
+                            <div className="text-xs text-muted-foreground">{item.dosage} {item.usage}</div>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // 注射オーダーの場合は従来の検索
+        return (
+          <div className="p-4">
+            <h3 className="mb-3">薬剤検索</h3>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="薬剤名を入力（3文字以上）"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            {searchQuery.length >= 3 && (
+              <div className="space-y-2">
+                {/* リアルタイム検索結果をシミュレート */}
+                {[
+                  { id: 'search-1', name: `${searchQuery}注射液10mg`, dosage: '10mg', usage: '静脈内投与' },
+                  { id: 'search-2', name: `${searchQuery}点滴500ml`, dosage: '500ml', usage: '点滴静注' },
+                  { id: 'search-3', name: `${searchQuery}バイアル5mg`, dosage: '5mg', usage: '筋肉内注射' }
+                ].map((item, index) => (
+                  <div key={index} className="p-2 rounded border border-border hover:bg-accent group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="text-sm">{item.name}</div>
+                        {item.dosage && (
+                          <div className="text-xs text-muted-foreground">
+                            {item.dosage} {item.usage}
+                          </div>
+                        )}
+                      </div>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="ml-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleAddItem(item, 'search')}
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case 'frequent':
+        return (
+          <div className="p-4">
+            <h3 className="mb-3 flex items-center gap-2">
+              <Star className="w-4 h-4 text-yellow-500" />
+              頻用オーダー
+            </h3>
+            <div className="mb-2 text-xs text-muted-foreground">
+              {isDirectMode ? '今月の使用回数順（直接オーダーリストに追加）' : '今月の使用回数順'}
+            </div>
+            <div className={`${isDirectMode ? 'grid grid-cols-2 gap-2' : 'space-y-2'}`}>
+              {mockFrequentOrders[activeTab]?.map((item, index) => (
+                <div key={item.id} className="p-2 rounded border border-border hover:bg-accent group">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs">
+                          {index + 1}
+                        </span>
+                        <div className="text-sm">{item.name}</div>
+                      </div>
+                      {item.dosage && item.usage && (
+                        <div className="text-xs text-muted-foreground ml-7">
+                          {item.dosage} {item.usage}
+                        </div>
+                      )}
+                      <div className="text-xs text-muted-foreground ml-7">
+                        使用回数: {item.frequency}回
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="ml-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => {
+                        if (isDirectMode) {
+                          if (activeTab === 'lab') {
+                            handleAddLabFrequentItem(item);
+                          } else if (activeTab === 'prescription') {
+                            handleAddDrugFrequentItem(item);
+                          }
+                        } else {
+                          handleAddItem(item, 'frequent');
+                        }
+                      }}
+                    >
+                      <Plus className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  // 直接入力モードかどうかを判定（処方・検体オーダーで履歴以外のタブ）
+  const isDirectMode = (activeTab === 'lab' || activeTab === 'prescription') && activeSubTab !== 'history';
+  const panelWidth = isDirectMode ? 'w-[750px]' : 'w-80';
+
+  return (
+    <div className={`${panelWidth} bg-card border-r border-border flex flex-col`}>
+      <div className="p-4 border-b border-border">
+        <h2>オーダー入力</h2>
+        <div className="text-sm text-muted-foreground mt-1">
+          {activeTab === 'prescription' ? '処方オーダー' : 
+           activeTab === 'injection' ? '注射オーダー' : 
+           '検体オーダー'}
+        </div>
+      </div>
+      
+      {/* 候補種別タブ（旧第2階層を第1階層に） */}
+      <div className="px-4 mt-4">
+        <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="flex-1 flex flex-col">
+          <TabsList className={`grid w-full ${activeTab === 'prescription' ? 'grid-cols-5' : activeTab === 'lab' ? 'grid-cols-3' : 'grid-cols-4'}`}>
+            {activeTab === 'lab' ? (
+              <>
+                <TabsTrigger value="search" className="text-xs">検査項目</TabsTrigger>
+                <TabsTrigger value="history" className="text-xs">履歴</TabsTrigger>
+                <TabsTrigger value="sets" className="text-xs">セット</TabsTrigger>
+              </>
+            ) : activeTab === 'prescription' ? (
+              <>
+                <TabsTrigger value="search" className="text-xs">薬剤</TabsTrigger>
+                <TabsTrigger value="history" className="text-xs">履歴</TabsTrigger>
+                <TabsTrigger value="sets" className="text-xs">セット</TabsTrigger>
+                <TabsTrigger value="frequent" className="text-xs">頻用</TabsTrigger>
+                <TabsTrigger value="category" className="text-xs">薬効</TabsTrigger>
+              </>
+            ) : (
+              <>
+                <TabsTrigger value="history" className="text-xs">履歴</TabsTrigger>
+                <TabsTrigger value="sets" className="text-xs">セット</TabsTrigger>
+                <TabsTrigger value="search" className="text-xs">薬剤</TabsTrigger>
+                <TabsTrigger value="frequent" className="text-xs">頻用</TabsTrigger>
+              </>
+            )}
+          </TabsList>
+
+          <div className="flex-1 overflow-y-auto">
+            {renderSubTabContent()}
+          </div>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

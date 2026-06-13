@@ -1,0 +1,88 @@
+graph TB
+    subgraph Rules["横断ルール（全Phase適用）"]
+        CrossLayer["cross-layer-rules.md"]
+        TestRules["test-rules.md"]
+
+        CrossLayer --> CL1["型安全性<br/>(any禁止・型ガード)"]
+        CrossLayer --> CL2["層の責務<br/>(UI/hooks/api/repository)"]
+        CrossLayer --> CL3["BEモック実装<br/>(Controller層のみ)"]
+        CrossLayer --> CL4["環境変数<br/>(Server vs Client)"]
+        CrossLayer --> CL5["redirect禁止<br/>(try-catch内)"]
+
+        TestRules --> TR1["実装詳細テスト禁止"]
+        TestRules --> TR2["1test = 1assertion"]
+        TestRules --> TR3["スナップショット多用禁止"]
+        TestRules --> TR4["設計書ベーステスト"]
+        TestRules --> TR5["repository/hooksモック禁止"]
+    end
+
+    subgraph Design["設計書参照（Phase別）"]
+        DesignBase["docs/01_アプリ/{domain}/Fxx/"]
+
+        DesignBase --> PRD["prd-Fxx_機能名.md"]
+        DesignBase --> DesignDoc["design-Fxx_機能名.md"]
+        DesignBase --> DetailFE["detail-Fxx_機能名_frontend.md"]
+        DesignBase --> DetailBFF["detail-Fxx_機能名_bff.md"]
+
+        PRD -.->|Phase 0| P0["T0-3: 個別詳細設計書読み込み"]
+        DetailFE -.->|Phase 1-7| P17["T1-1〜T7-3: 実装タスク"]
+        DetailBFF -.->|Phase 2| P2["T2-1〜T2-2: API実装"]
+        DesignDoc -.->|Phase 6| P6["T6-3: 操作フロー確認"]
+    end
+
+    subgraph Foundation["基盤設計書参照"]
+        FoundBase["docs/02_アプリ基盤/01_フロントエンド・BFF/02_詳細設計書/"]
+
+        FoundBase --> F01["01_ディレクトリ構造.md"]
+        FoundBase --> F02["02_画面遷移設計.md"]
+        FoundBase --> F03["03_状態管理設計.md"]
+        FoundBase --> F04["04_エラーハンドリング設計.md"]
+        FoundBase --> F05["05_エラー方針.md"]
+        FoundBase --> F10["10_BFF設計.md"]
+
+        F01 -.->|Phase 1| P1["T1-1: ディレクトリ作成"]
+        F03 -.->|Phase 3| P3["T3-1: Zustandストア実装"]
+        F04 -.->|Phase 7| P7["T7-3: エラーハンドリング実装"]
+        F05 -.->|Phase 7| P7
+        F10 -.->|Phase 2| P2
+    end
+
+    subgraph Skills["補助スキル"]
+        BFFImpl["app-bff-fetch-impl/SKILL.md<br/>(BFF fetch チェックリスト)"]
+        TypeInterface["app-component-type-interface/SKILL.md<br/>(Feature型インターフェース)"]
+        E2EPrep["app-e2e-test-prep/SKILL.md<br/>(E2E事前準備)"]
+        FoundBoundary["app-foundation-boundary/SKILL.md<br/>(基盤担当領域)"]
+
+        BFFImpl -.->|Phase 2| P2
+        TypeInterface -.->|Phase 6| P6
+        E2EPrep -.->|Phase 10| P10["T10-5: E2Eテスト作成"]
+        FoundBoundary -.->|全Phase| AllReview["app-impl-reviewer<br/>(最初に実行)"]
+    end
+
+    style CrossLayer fill:#ffccbc
+    style TestRules fill:#ffccbc
+    style CL1 fill:#fff9c4
+    style CL2 fill:#fff9c4
+    style CL3 fill:#fff9c4
+    style CL4 fill:#fff9c4
+    style CL5 fill:#fff9c4
+    style TR1 fill:#fff9c4
+    style TR2 fill:#fff9c4
+    style TR3 fill:#fff9c4
+    style TR4 fill:#fff9c4
+    style TR5 fill:#fff9c4
+    style PRD fill:#c8e6c9
+    style DesignDoc fill:#c8e6c9
+    style DetailFE fill:#c8e6c9
+    style DetailBFF fill:#c8e6c9
+    style F01 fill:#e1bee7
+    style F02 fill:#e1bee7
+    style F03 fill:#e1bee7
+    style F04 fill:#e1bee7
+    style F05 fill:#e1bee7
+    style F10 fill:#e1bee7
+    style BFFImpl fill:#e1bee7
+    style TypeInterface fill:#e1bee7
+    style E2EPrep fill:#e1bee7
+    style FoundBoundary fill:#e1bee7
+    style AllReview fill:#ffccbc

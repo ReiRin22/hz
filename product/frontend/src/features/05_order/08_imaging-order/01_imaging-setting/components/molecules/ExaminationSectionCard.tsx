@@ -1,0 +1,91 @@
+'use client';
+
+/**
+ * ExaminationSectionCard - 検査詳細カード (Molecule)
+ *
+ * 参照元: 【ORD032～ORD035】src/components/features/imaging-order/molecules/ExaminationSectionCard.tsx
+ */
+
+import { Button } from '@/shared/components/atoms/button';
+import { X, Settings } from 'lucide-react';
+import type { ExaminationSection } from '../../types';
+
+interface ExaminationSectionCardProps {
+  section: ExaminationSection;
+  index: number;
+  totalSections: number;
+  onRemove: () => void;
+  onOpenDetail: () => void;
+}
+
+export function ExaminationSectionCard({
+  section,
+  index,
+  totalSections,
+  onRemove,
+  onOpenDetail
+}: ExaminationSectionCardProps) {
+  return (
+    <div className="border border-border rounded-lg p-3 space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm">検査詳細 {totalSections > 1 ? `(${index + 1})` : ''}</h3>
+        <div className="flex gap-2">
+          {/* 2つ目以降のセクションには削除ボタン */}
+          {index > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRemove}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {/* 設定済み情報の表示 */}
+        {section.bodyParts && (
+          <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-md">
+            <div className="font-medium">{section.bodyParts}</div>
+            {section.directions.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                撮影方向: {section.directions.join('・')}
+              </div>
+            )}
+            {section.laterality.length > 0 && !section.laterality.includes('Not specified') && (
+              <div className="text-xs text-muted-foreground">
+                側性: {section.laterality.join('・')}
+              </div>
+            )}
+            {section.positions.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                体位: {section.positions.join('・')}
+              </div>
+            )}
+            {section.functionalConditions.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                機能条件: {section.functionalConditions.join('・')}
+              </div>
+            )}
+            {section.radiationCondition && (
+              <div className="text-xs text-muted-foreground">
+                照射条件: {section.radiationCondition}
+              </div>
+            )}
+          </div>
+        )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onOpenDetail}
+          className="w-full"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          詳細設定
+        </Button>
+      </div>
+    </div>
+  );
+}

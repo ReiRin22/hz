@@ -1,0 +1,1 @@
+// This component has been removed as voice functionality is integrated into InputAssistToolbar

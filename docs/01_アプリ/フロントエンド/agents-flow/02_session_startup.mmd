@@ -1,0 +1,57 @@
+graph TB
+    Start(["/implement {domain}/Fxx 実行"])
+    Start --> Load["セッション開始時の必須ファイル読み込み"]
+
+    Load --> F1["📄 CLAUDE.md<br/>(プロジェクト状態管理)"]
+    Load --> F2["📄 .claude/commands/implement.md<br/>(メイン指示書)"]
+    Load --> F3["📄 .claude/rules/impl-agents.md<br/>(実装エージェント一覧)"]
+    Load --> F4["📄 .claude/rules/cross-layer-rules.md<br/>(FE/BFF/BE横断ルール)"]
+    Load --> F5["📄 .claude/rules/test-rules.md<br/>(テストルール)"]
+
+    Load --> F6["📄 docs/01_アプリ/INDEX.md<br/>(機能一覧・依存関係)"]
+    Load --> F7["📄 docs/01_アプリ/design-review-findings.md<br/>(過去の指摘パターン)"]
+
+    Load --> F8["📄 .steering/YYYYMMDD-機能名/state.md<br/>(Phase進行状況)"]
+    Load --> F9["📄 .steering/YYYYMMDD-機能名/tasklist.md<br/>(タスクリスト)"]
+
+    F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 --> CheckPhase["📊 state.md から<br/>current_phase を確認"]
+
+    CheckPhase --> LoadSkill["🔧 Phase対応のSKILL.md読み込み"]
+
+    LoadSkill --> P0["implement-phase0/SKILL.md"]
+    LoadSkill --> P1["implement-phase1/SKILL.md"]
+    LoadSkill --> P2["implement-phase2/SKILL.md"]
+    LoadSkill --> P3["implement-phase3/SKILL.md"]
+    LoadSkill --> P4["implement-phase4/SKILL.md"]
+    LoadSkill --> P5["implement-phase5/SKILL.md"]
+    LoadSkill --> P6["implement-phase6/SKILL.md"]
+    LoadSkill --> P7["implement-phase7/SKILL.md"]
+    LoadSkill --> P8["implement-phase8/SKILL.md"]
+    LoadSkill --> P9["implement-phase9/SKILL.md"]
+    LoadSkill --> P10["implement-phase10/SKILL.md"]
+
+    P0 & P1 & P2 & P3 & P4 & P5 & P6 & P7 & P8 & P9 & P10 --> StartPhase["⚙️ Phase実行開始"]
+
+    style Start fill:#e1f5ff
+    style F1 fill:#fff9c4
+    style F2 fill:#fff9c4
+    style F3 fill:#fff9c4
+    style F4 fill:#fff9c4
+    style F5 fill:#fff9c4
+    style F6 fill:#c8e6c9
+    style F7 fill:#c8e6c9
+    style F8 fill:#ffccbc
+    style F9 fill:#ffccbc
+    style LoadSkill fill:#e1bee7
+    style P0 fill:#e1bee7
+    style P1 fill:#e1bee7
+    style P2 fill:#e1bee7
+    style P3 fill:#e1bee7
+    style P4 fill:#e1bee7
+    style P5 fill:#e1bee7
+    style P6 fill:#e1bee7
+    style P7 fill:#e1bee7
+    style P8 fill:#e1bee7
+    style P9 fill:#e1bee7
+    style P10 fill:#e1bee7
+    style StartPhase fill:#c8e6c9

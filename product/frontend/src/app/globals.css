@@ -1,0 +1,435 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 14px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* 医療システム専用カラーパレット（ツートーン明るく） */
+  /* テーマカラー（診療記録・メイン機能） - Blue-800 → Blue-600 */
+  --medical-primary: #2563eb;        /* Blue-600 (was Blue-800) */
+  --medical-primary-light: #3b82f6;  /* Blue-500 (was Blue-700) */
+  --medical-primary-dark: #1d4ed8;   /* Blue-700 (was Blue-900) */
+  --medical-primary-bg: #eff6ff;     /* Blue-50 (was Blue-100) */
+  --medical-primary-border: #bfdbfe; /* Blue-200 (was Blue-300) */
+
+  /* サブカラー（オーダー・アクション機能） - Green-700 → Green-500 */
+  --medical-secondary: #10b981;       /* Green-500 (was Green-700) */
+  --medical-secondary-light: #34d399; /* Green-400 (was Green-600) */
+  --medical-secondary-dark: #059669;  /* Green-600 (was Green-800) */
+  --medical-secondary-bg: #ecfdf5;    /* Green-50 (was Green-100) */
+  --medical-secondary-border: #bbf7d0; /* Green-200 (was Green-300) */
+
+  /* アクセントカラー（中性的な要素） */
+  --medical-accent: #6b7280;          /* Gray-500 (was Gray-700) */
+  --medical-accent-light: #9ca3af;    /* Gray-400 (was Gray-600) */
+  --medical-accent-dark: #4b5563;     /* Gray-600 (was Gray-800) */
+  --medical-accent-bg: #f9fafb;       /* Gray-50 (was Gray-100) */
+  --medical-accent-border: #d1d5db;   /* Gray-300 (was Gray-400) */
+
+  /* 警告・アラート系 */
+  --medical-warning: #f59e0b;         /* Amber-500 (was Amber-700) */
+  --medical-warning-bg: #fffbeb;      /* Amber-50 (was Amber-100) */
+  --medical-warning-border: #fcd34d;  /* Amber-300 (was Amber-500) */
+
+  --medical-danger: #ef4444;          /* Red-500 (was Red-700) */
+  --medical-danger-bg: #fef2f2;       /* Red-50 (was Red-100) */
+  --medical-danger-border: #fca5a5;   /* Red-300 (was Red-400) */
+
+  /* 機能別カラー */
+  --medical-records: var(--medical-primary);
+  --medical-orders: var(--medical-secondary);
+  --medical-vitals: #8b5cf6;          /* Purple-500 (was Purple-700) */
+  --medical-vitals-bg: #f5f3ff;       /* Purple-50 (was Purple-100) */
+  --medical-tests: #f97316;           /* Orange-500 (was Orange-700) */
+  --medical-tests-bg: #fff7ed;        /* Orange-50 (was Orange-100) */
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+
+  /* ダークモード用医療システムカラー（ツートーン明るく調整） */
+  --medical-primary: #3b82f6;        /* Blue-500 (was Blue-700) */
+  --medical-primary-light: #60a5fa;  /* Blue-400 (was Blue-500) */
+  --medical-primary-dark: #2563eb;   /* Blue-600 (was Blue-800) */
+  --medical-primary-bg: #1e3a8a;     /* Blue-800 */
+  --medical-primary-border: #1d4ed8; /* Blue-700 */
+
+  --medical-secondary: #34d399;       /* Green-400 (was Green-600) */
+  --medical-secondary-light: #6ee7b7; /* Green-300 (was Green-500) */
+  --medical-secondary-dark: #10b981;  /* Green-500 (was Green-700) */
+  --medical-secondary-bg: #064e3b;    /* Green-800 */
+  --medical-secondary-border: #059669; /* Green-600 */
+
+  --medical-accent: #9ca3af;          /* Gray-400 (was Gray-600) */
+  --medical-accent-light: #d1d5db;    /* Gray-300 (was Gray-500) */
+  --medical-accent-dark: #6b7280;     /* Gray-500 (was Gray-700) */
+  --medical-accent-bg: #374151;       /* Gray-700 */
+  --medical-accent-border: #4b5563;   /* Gray-600 */
+
+  --medical-warning: #fbbf24;         /* Amber-400 (was Amber-600) */
+  --medical-warning-bg: #92400e;      /* Amber-800 */
+  --medical-warning-border: #f59e0b;  /* Amber-500 */
+
+  --medical-danger: #f87171;          /* Red-400 (was Red-600) */
+  --medical-danger-bg: #991b1b;       /* Red-800 */
+  --medical-danger-border: #ef4444;   /* Red-500 */
+
+  --medical-records: var(--medical-primary);
+  --medical-orders: var(--medical-secondary);
+  --medical-vitals: #a78bfa;          /* Purple-400 (was Purple-600) */
+  --medical-vitals-bg: #581c87;       /* Purple-800 */
+  --medical-tests: #fb923c;           /* Orange-400 (was Orange-600) */
+  --medical-tests-bg: #9a3412;        /* Orange-800 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* 医療システムカラートークン */
+  --color-medical-primary: var(--medical-primary);
+  --color-medical-primary-light: var(--medical-primary-light);
+  --color-medical-primary-dark: var(--medical-primary-dark);
+  --color-medical-primary-bg: var(--medical-primary-bg);
+  --color-medical-primary-border: var(--medical-primary-border);
+  
+  --color-medical-secondary: var(--medical-secondary);
+  --color-medical-secondary-light: var(--medical-secondary-light);
+  --color-medical-secondary-dark: var(--medical-secondary-dark);
+  --color-medical-secondary-bg: var(--medical-secondary-bg);
+  --color-medical-secondary-border: var(--medical-secondary-border);
+  
+  --color-medical-accent: var(--medical-accent);
+  --color-medical-accent-light: var(--medical-accent-light);
+  --color-medical-accent-dark: var(--medical-accent-dark);
+  --color-medical-accent-bg: var(--medical-accent-bg);
+  --color-medical-accent-border: var(--medical-accent-border);
+  
+  --color-medical-warning: var(--medical-warning);
+  --color-medical-warning-bg: var(--medical-warning-bg);
+  --color-medical-warning-border: var(--medical-warning-border);
+  
+  --color-medical-danger: var(--medical-danger);
+  --color-medical-danger-bg: var(--medical-danger-bg);
+  --color-medical-danger-border: var(--medical-danger-border);
+  
+  --color-medical-records: var(--medical-records);
+  --color-medical-orders: var(--medical-orders);
+  --color-medical-vitals: var(--medical-vitals);
+  --color-medical-vitals-bg: var(--medical-vitals-bg);
+  --color-medical-tests: var(--medical-tests);
+  --color-medical-tests-bg: var(--medical-tests-bg);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Modern glassmorphism and animation utilities */
+@layer utilities {
+  .glass-effect {
+    @apply bg-white/10 dark:bg-gray-900/10 backdrop-blur-md border border-white/20 dark:border-gray-700/20;
+  }
+  
+  .gradient-text {
+    @apply text-blue-800 dark:text-blue-200;
+  }
+  
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-lg;
+  }
+  
+  .pulse-glow {
+    @apply animate-pulse drop-shadow-lg;
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+  
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  /* 医療システム専用ユーティリティクラス */
+  .medical-primary {
+    background-color: var(--color-medical-primary);
+    color: white;
+  }
+  
+  .medical-primary-light {
+    background-color: var(--color-medical-primary-light);
+    color: white;
+  }
+  
+  .medical-secondary {
+    background-color: var(--color-medical-secondary);
+    color: white;
+  }
+  
+  .medical-secondary-light {
+    background-color: var(--color-medical-secondary-light);
+    color: white;
+  }
+  
+  .medical-accent {
+    background-color: var(--color-medical-accent);
+    color: white;
+  }
+  
+  .medical-text-primary {
+    color: var(--color-medical-primary);
+  }
+  
+  .medical-text-secondary {
+    color: var(--color-medical-secondary);
+  }
+  
+  .medical-border-primary {
+    border-color: var(--color-medical-primary-border);
+  }
+  
+  .medical-border-secondary {
+    border-color: var(--color-medical-secondary-border);
+  }
+  
+  .medical-bg-primary {
+    background-color: var(--color-medical-primary-bg);
+  }
+  
+  .medical-bg-secondary {
+    background-color: var(--color-medical-secondary-bg);
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3));
+  }
+  100% {
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+  }
+}
+
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modern scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500;
+  transition: background-color 0.2s;
+}
+
+/* Enhanced focus rings */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+}
+
+/* ============================================================
+ * RichTextEditor placeholder（Tailwind では `content: attr(data-placeholder)` を表現できないため残置）
+ * TODO(globals-inline-revert): Tailwind が attr() の任意値をサポートしたら削除
+ * ============================================================ */
+@layer components {
+  .rich-text-editor:empty::before {
+    content: attr(data-placeholder);
+    @apply text-gray-400 dark:text-gray-500 whitespace-pre-wrap pointer-events-none;
+  }
+}

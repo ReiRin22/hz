@@ -1,0 +1,104 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+  @page { margin: 20mm; }
+  body { font-family: 'Meiryo', 'Yu Gothic', 'Noto Sans CJK JP', sans-serif;
+         max-width: 900px; margin: 40px auto; line-height: 1.8; font-size: 10pt; color: #222; }
+  h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 6px; margin-top: 0; }
+  h2 { font-size: 14pt; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  h3 { font-size: 12pt; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; table-layout: fixed; }
+  td, th { border: 1px solid #bbb; padding: 6px 10px; word-break: break-word; overflow-wrap: anywhere; }
+  th { background: #f0f0f0; font-weight: bold; }
+  code { background: #f5f5f5; padding: 2px 5px; border-radius: 3px; font-size: 9pt; }
+  pre:not(.mermaid) { background: #f5f5f5; padding: 14px; overflow-x: auto; border-radius: 4px; }
+  blockquote { border-left: 4px solid #ccc; margin: 0; padding: 4px 16px; color: #555; }
+  a { color: #1a73e8; }
+</style></head><body><pre class="mermaid">sequenceDiagram
+title 19.輸血（入院）
+autonumber
+participant 患者
+participant 医師
+participant 看護師
+participant 検査技師
+participant 電子カルテ
+participant 医事会計システム
+
+Note over 医師,電子カルテ : ※補完【輸血オーダー前】輸血判断
+医師 -&gt;&gt; 電子カルテ : 輸血適応判断・輸血フラグ確認記録
+alt 緊急輸血（生命危機・意識なし等）
+    Note over 医師,電子カルテ : ※補完【緊急時例外フロー】意識なし・家族不在・生命危機
+    医師 -&gt;&gt; 電子カルテ : 緊急輸血オーダー登録
+    電子カルテ --&gt;&gt; 看護師 : 緊急輸血オーダー通知
+    電子カルテ --&gt;&gt; 検査技師 : 緊急血液型検査・交差試験オーダー通知
+    検査技師 -&gt;&gt; 患者 : 緊急血液型検査・交差試験実施
+    検査技師 -&gt;&gt; 電子カルテ : 検査結果登録
+    検査技師 -&gt;&gt; 看護師 : 輸血製剤準備・払い出し
+    看護師 -&gt;&gt; 看護師 : 輸血製剤受領・ダブルチェック
+    看護師 -&gt;&gt; 患者 : 輸血実施・バイタル確認
+    看護師 -&gt;&gt; 電子カルテ : 輸血記録入力
+    医師 -&gt;&gt; 電子カルテ : 緊急輸血実施記録・事後同意取得記録
+    電子カルテ --&gt;&gt; 医事会計システム : 輸血実施情報連携
+    alt 副作用・不適合あり
+        看護師 -&gt;&gt; 医師 : 副作用・不適合報告
+        医師 -&gt;&gt; 電子カルテ : 副作用報告・感染症チェック記録入力
+    end
+else 通常輸血
+    医師 -&gt;&gt; 電子カルテ : 輸血オーダー登録
+    電子カルテ --&gt;&gt; 看護師 : 輸血オーダー通知
+    医師 -&gt;&gt; 患者 : 輸血内容・リスク説明
+    alt 同意あり
+        患者 -&gt;&gt; 医師 : 同意書署名
+        医師 -&gt;&gt; 電子カルテ : 同意書スキャン取り込み
+        電子カルテ --&gt;&gt; 検査技師 : 血液型検査・交差試験オーダー通知
+        検査技師 -&gt;&gt; 患者 : 血液型検査・交差試験実施
+        検査技師 -&gt;&gt; 電子カルテ : 検査結果登録
+        検査技師 -&gt;&gt; 看護師 : 輸血製剤準備・払い出し
+        看護師 -&gt;&gt; 看護師 : 輸血製剤受領・ダブルチェック（手術看護師＋別職員）
+        看護師 -&gt;&gt; 患者 : 本人確認（3点チェック）
+        看護師 -&gt;&gt; 患者 : 輸血実施・バイタル確認
+        看護師 -&gt;&gt; 電子カルテ : 輸血記録入力
+        電子カルテ --&gt;&gt; 医事会計システム : 輸血実施情報連携
+        alt 副作用・不適合あり
+            看護師 -&gt;&gt; 医師 : 副作用・不適合報告
+            医師 -&gt;&gt; 電子カルテ : 副作用報告・感染症チェック記録入力
+        end
+    else 同意なし
+        Note over 医師,電子カルテ : ※補完【不同意時】同意拒否確認・再説明
+        医師 -&gt;&gt; 患者 : 同意拒否確認（本人意思・代理判断・判断能力の有無）
+        医師 -&gt;&gt; 患者 : 再説明（リスク：死亡・重篤化、代替治療：鉄剤・エリスロポエチン・補液等）
+        alt 再説明後も拒否
+            医師 -&gt;&gt; 電子カルテ : 拒否理由・説明内容・説明者・日時記録
+            医師 -&gt;&gt; 電子カルテ : 上級医・病棟責任者へ報告記録
+            Note over 医師,電子カルテ : ※補完 必要に応じて倫理委員会へ報告
+            医師 -&gt;&gt; 患者 : 代替治療実施（鉄剤投与・エリスロポエチン・補液等）
+            医師 -&gt;&gt; 電子カルテ : 代替治療記録・オーダー取消記録
+        else 再説明後に同意
+            患者 -&gt;&gt; 医師 : 同意書署名
+            医師 -&gt;&gt; 電子カルテ : 同意書スキャン取り込み
+            電子カルテ --&gt;&gt; 検査技師 : 血液型検査・交差試験オーダー通知
+            検査技師 -&gt;&gt; 患者 : 血液型検査・交差試験実施
+            検査技師 -&gt;&gt; 電子カルテ : 検査結果登録
+            検査技師 -&gt;&gt; 看護師 : 輸血製剤準備・払い出し
+            看護師 -&gt;&gt; 看護師 : 輸血製剤受領・ダブルチェック
+            看護師 -&gt;&gt; 患者 : 本人確認（3点チェック）
+            看護師 -&gt;&gt; 患者 : 輸血実施・バイタル確認
+            看護師 -&gt;&gt; 電子カルテ : 輸血記録入力
+            電子カルテ --&gt;&gt; 医事会計システム : 輸血実施情報連携
+        end
+    end
+end
+</pre>
+
+<hr>
+<h2>レビュー指摘メモ</h2>
+<table>
+  <thead><tr><th>日付</th><th>指摘内容</th><th>背景</th></tr></thead>
+  <tbody>
+    <tr><td>2026-05-28</td><td>輸血実施前チェックとして、日本赤十字社（日赤）の輸血製剤バーコードと患者のバーコードをスキャンして照合できる機能が必要である</td><td>輸血の取り違えは重篤な医療事故につながるため、製剤バーコードと患者識別コードの電子照合による安全確認が必要。現在のフローではダブルチェックが目視前提となっており、バーコードスキャンによる自動照合の仕組みを追加する必要がある</td></tr>
+  </tbody>
+</table>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+</body></html>

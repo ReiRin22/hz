@@ -1,0 +1,61 @@
+{
+  "rightSideMenu": {
+    "collapseTooltip": "折りたたむ",
+    "expandTooltip": "展開",
+    "gotoMenuLabel": "メニュー",
+    "menuError": "メニューの取得に失敗しました",
+    "departments": {
+      "NURSING": "看護部",
+      "LAB_TEST": "臨床検査科",
+      "RADIOLOGY": "放射線科",
+      "ENDOSCOPY": "内視鏡検査科",
+      "NUTRITION": "栄養指示科",
+      "PHARMACY": "薬剤部",
+      "ADMINISTRATION": "事務",
+      "REHABILITATION": "リハビリテーション科"
+    }
+  },
+  "bulletinBoardDialog": {
+    "title": "院内掲示板",
+    "closeBtn": "閉じる",
+    "categories": {
+      "important": "重要",
+      "notice": "お知らせ",
+      "training": "研修",
+      "communication": "連絡",
+      "event": "イベント"
+    },
+    "authorPrefix": "投稿者: {author}"
+  },
+  "memoDialog": {
+    "titleList": "伝言メモ",
+    "titleDetail": "伝言詳細",
+    "titleCreate": "新規伝言メモ作成",
+    "backBtn": "戻る",
+    "backToListBtn": "一覧に戻る",
+    "addBtn": "追加",
+    "closeBtn": "閉じる"
+  },
+  "memoListView": {
+    "receivedTab": "受信",
+    "sentTab": "送信"
+  },
+  "memoDetailView": {
+    "titleLabel": "タイトル",
+    "contentLabel": "内容",
+    "fromLabel": "送信者",
+    "datetimeLabel": "日時",
+    "confirmBtn": "確認"
+  },
+  "memoCreateForm": {
+    "toLabel": "宛先",
+    "toPlaceholder": "例: 看護部",
+    "titleLabel": "タイトル",
+    "titlePlaceholder": "例: 患者検査結果の確認依頼",
+    "contentLabel": "メモ内容",
+    "contentPlaceholder": "伝言内容を入力してください",
+    "cancelBtn": "キャンセル",
+    "submitBtn": "送信",
+    "selectedDepts": "選択中: {depts}"
+  }
+}

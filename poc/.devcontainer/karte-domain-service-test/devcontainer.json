@@ -1,0 +1,14 @@
+{
+  "name": "Harz PoC KarteDomainService Test",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-10.0",
+  "postCreateCommand": "dotnet tool restore && dotnet restore /workspaces/harz/poc/backend/KarteDomainService.Tests/KarteDomainService.Tests.csproj",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "formulahendry.dotnet-test-explorer"
+      ]
+    }
+  }
+}

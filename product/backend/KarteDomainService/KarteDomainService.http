@@ -1,0 +1,6 @@
+@KarteDomainService_HostAddress = http://localhost:7121
+
+GET {{KarteDomainService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

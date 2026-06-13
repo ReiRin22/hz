@@ -1,0 +1,93 @@
+services:
+  # -----------------------------------------------------------------
+  # Frontend サービス
+  # -----------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/workspaces/harz/poc/frontend
+      - /workspaces/harz/poc/frontend/node_modules
+      - ./front_bff_shared:/workspaces/harz/poc/front_bff_shared
+      - ./../docs:/workspaces/harz/docs
+      - ./../.claude:/workspaces/harz/.claude
+    environment:
+      - NODE_ENV=development
+      - RUN_COMMAND=${RUN_COMMAND:-dev} # デフォルトは dev
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
+      - AWS_REGION=${AWS_REGION}
+      - CLAUDE_CODE_USE_BEDROCK=${CLAUDE_CODE_USE_BEDROCK}
+    command: npm run ${RUN_COMMAND:-dev}
+
+  # -----------------------------------------------------------------
+  # BFF サービス
+  # -----------------------------------------------------------------
+  bff:
+    build:
+      context: .
+      dockerfile: bff/Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./bff:/workspaces/harz/poc/bff
+      - /workspaces/harz/poc/bff/node_modules
+      - ./front_bff_shared:/workspaces/harz/poc/front_bff_shared
+      - ./../docs:/workspaces/harz/docs
+      - ./../.claude:/workspaces/harz/.claude
+    environment:
+      - NODE_ENV=development
+      - RUN_COMMAND=${RUN_COMMAND:-dev} # デフォルトは dev
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
+      - AWS_REGION=${AWS_REGION}
+      - CLAUDE_CODE_USE_BEDROCK=${CLAUDE_CODE_USE_BEDROCK}
+    command: npm run ${RUN_COMMAND:-dev}
+
+  # -----------------------------------------------------------------
+  # KarteDomainService (.NET) サービス
+  # -----------------------------------------------------------------
+  karte-domain-service:
+    build:
+      context: .
+      dockerfile: backend/KarteDomainService/Dockerfile
+    ports:
+      - "7121:7121"
+    volumes:
+      # ホスト側のKarteDomainServiceフォルダを、コンテナの/appに直接マウント
+      - ./backend/KarteDomainService:/workspaces/harz/poc/backend/KarteDomainService
+      - ./../docs:/workspaces/harz/docs
+      - ./../.claude:/workspaces/harz/.claude
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL}
+      - AWS_REGION=${AWS_REGION}
+      - CLAUDE_CODE_USE_BEDROCK=${CLAUDE_CODE_USE_BEDROCK}
+
+# -----------------------------------------------------------------
+  # Database (PostgreSQL) サービス
+  # -----------------------------------------------------------------
+  harz-db:
+    image: postgres:16-alpine
+    container_name: harz-db
+    environment:
+      - POSTGRES_USER=harz_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=harz_db
+    ports:
+      - "5430:5432"
+    volumes:
+      # コンテナを消してもデータが消えないように永続化
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db_init:/docker-entrypoint-initdb.d # 追加
+
+# ファイルの一番最後（servicesと同じ階層）に追記
+volumes:
+  postgres_data:

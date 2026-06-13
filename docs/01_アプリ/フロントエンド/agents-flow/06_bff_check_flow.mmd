@@ -1,0 +1,77 @@
+graph TB
+    Start(["/implement Phase 2 完了"])
+    Start --> ReviewStart["app-impl-reviewer 起動"]
+
+    ReviewStart --> BFFSkill["app-bff-fetch-impl/SKILL.md 読み込み"]
+
+    BFFSkill --> Check1["§1: 環境変数の使い分け"]
+    Check1 --> C1Q{"Server Component?"}
+    C1Q -->|Yes| C1A["BFF_BASE_URL 使用確認"]
+    C1Q -->|No| C1B["NEXT_PUBLIC_BFF_BASE_URL 使用確認"]
+
+    C1A & C1B --> Check2["§2: res.ok チェック"]
+    Check2 --> C2Q{"res.ok チェックあり?"}
+    C2Q -->|No| Fail1["❌ FAIL<br/>エラーハンドリング必須"]
+    C2Q -->|Yes| Check3["§3: try-catch パターン"]
+
+    Check3 --> C3Q{"try-catch で囲まれている?"}
+    C3Q -->|No| Fail2["❌ FAIL<br/>例外ハンドリング必須"]
+    C3Q -->|Yes| Check4["§4: Enum + DefaultValuePipe"]
+
+    Check4 --> C4Q{"@Query() で enum 受け取り?"}
+    C4Q -->|Yes| C4A["ParseEnumPipe + DefaultValuePipe 確認"]
+    C4Q -->|No| Check5["§5: モックデータ TODO"]
+
+    C4A --> Check5
+    Check5 --> C5Q{"モックデータあり?"}
+    C5Q -->|Yes| C5A["TODO コメント確認"]
+    C5Q -->|No| Check6["§6: Upstream 型定義"]
+
+    C5A --> Check6
+    Check6 --> C6Q{"*.type.ts に定義あり?"}
+    C6Q -->|No| Fail3["❌ FAIL<br/>型定義必須"]
+    C6Q -->|Yes| Check7["§7: 日付・UUID regex"]
+
+    Check7 --> C7Q{".regex() / .datetime() / .uuid() あり?"}
+    C7Q -->|No| Fail4["❌ FAIL<br/>厳密なスキーマ定義必須"]
+    C7Q -->|Yes| BFF3Header["BFF 3-header 伝搬確認"]
+
+    BFF3Header --> H1["correlationId 伝搬"]
+    BFF3Header --> H2["tenantId 伝搬"]
+    BFF3Header --> H3["authHeader 伝搬"]
+
+    H1 & H2 & H3 --> Flow["Controller → Service → Client"]
+
+    Flow --> FlowQ{"3-header が全層で伝搬?"}
+    FlowQ -->|No| Fail5["❌ FAIL<br/>header 伝搬が途切れている"]
+    FlowQ -->|Yes| Pass["✅ PASS<br/>BFF実装チェック完了"]
+
+    Fail1 --> End
+    Fail2 --> End
+    Fail3 --> End
+    Fail4 --> End
+    Fail5 --> End
+    Pass --> End([次セッションへ])
+
+    style Start fill:#e1f5ff
+    style ReviewStart fill:#e1bee7
+    style BFFSkill fill:#c8e6c9
+    style Check1 fill:#fff9c4
+    style Check2 fill:#fff9c4
+    style Check3 fill:#fff9c4
+    style Check4 fill:#fff9c4
+    style Check5 fill:#fff9c4
+    style Check6 fill:#fff9c4
+    style Check7 fill:#fff9c4
+    style BFF3Header fill:#ffccbc
+    style H1 fill:#ffccbc
+    style H2 fill:#ffccbc
+    style H3 fill:#ffccbc
+    style Flow fill:#ffccbc
+    style Pass fill:#c8e6c9
+    style Fail1 fill:#ffcdd2
+    style Fail2 fill:#ffcdd2
+    style Fail3 fill:#ffcdd2
+    style Fail4 fill:#ffcdd2
+    style Fail5 fill:#ffcdd2
+    style End fill:#e1f5ff

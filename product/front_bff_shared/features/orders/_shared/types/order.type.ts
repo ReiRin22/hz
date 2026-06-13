@@ -1,0 +1,31 @@
+export type OrderType =
+  | "prescription"
+  | "injection"
+  | "procedure"
+  | "guidance"
+  | "lab"
+  | "physiology"
+  | "endoscopy"
+  | "imaging"
+  | "pathology"
+  | "microbiology"
+  | "general"
+  | "rehabilitation"
+  | "transfusion"
+  | "surgery"
+  | "dialysis"
+  | "nutrition"
+  | "respiratory"
+  | "bed"
+  | "surgeryProcedure"
+  | "neonatal"
+  | "physicalTherapy";
+
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "cancelled"
+  | "ordered"
+  | "accepted"
+  | "in-progress"
+  | "completed";

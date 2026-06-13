@@ -1,0 +1,347 @@
+flowchart LR
+
+subgraph 0["src"]
+subgraph 1["features"]
+subgraph 2["05_order"]
+subgraph 3["05_specimen-order"]
+subgraph 4["01_specimen-setting"]
+subgraph 5["api"]
+6["specimenOrderApi.ts"]
+end
+subgraph A["components"]
+subgraph B["molecules"]
+C["SpecimenHistoryList.tsx"]
+D["SpecimenOrderConfirmButton.tsx"]
+V["SpecimenOrderItemRow.tsx"]
+W["SpecimenSetSelector.tsx"]
+Y["SpecimenSetsList.tsx"]
+11["SpecimenTypeSelector.tsx"]
+12["SpecimenUrgencySelector.tsx"]
+end
+subgraph 13["organisms"]
+14["SpecimenConfirmPanel.tsx"]
+16["SpecimenContentPanel.tsx"]
+18["SpecimenOrderDetailPanel.tsx"]
+1A["SpecimenOrderEditForm.tsx"]
+1I["SpecimenOrderEntryOrganism.tsx"]
+end
+end
+subgraph 1B["hooks"]
+1C["useSpecimenPanelData.ts"]
+1J["useSpecimenSections.ts"]
+2O["useSpecimenOrderSubmit.ts"]
+2P["useSpecimenSets.ts"]
+end
+2Q["index.tsx"]
+subgraph 2R["stories"]
+2S["ORD023.stories.tsx"]
+subgraph 2W["molecules"]
+2X["SpecimenHistoryList.stories.tsx"]
+2Y["SpecimenOrderConfirmButton.stories.tsx"]
+2Z["SpecimenOrderItemRow.stories.tsx"]
+30["SpecimenSetSelector.stories.tsx"]
+31["SpecimenSetsList.stories.tsx"]
+32["SpecimenTypeSelector.stories.tsx"]
+33["SpecimenUrgencySelector.stories.tsx"]
+end
+subgraph 34["organisms"]
+35["SpecimenConfirmPanel.stories.tsx"]
+36["SpecimenContentPanel.stories.tsx"]
+37["SpecimenOrderDetailPanel.stories.tsx"]
+38["SpecimenOrderEditForm.stories.tsx"]
+39["SpecimenOrderEntryOrganism.stories.tsx"]
+end
+end
+subgraph 2T["test"]
+subgraph 2U["msw"]
+2V["handlers.ts"]
+end
+3A["ORD023-test.js"]
+3B["ORD023.stories.test.tsx"]
+3C["SpecimenConfirmPanel.stories.test.tsx"]
+3D["SpecimenContentPanel.stories.test.tsx"]
+3E["SpecimenHistoryList.stories.test.tsx"]
+3F["SpecimenHistoryList.test.tsx"]
+3G["SpecimenOrderConfirmButton.stories.test.tsx"]
+3H["SpecimenOrderDetailPanel.stories.test.tsx"]
+3I["SpecimenOrderEditForm.stories.test.tsx"]
+3J["SpecimenOrderEntryFeature.test.tsx"]
+3K["SpecimenOrderEntryOrganism.stories.test.tsx"]
+3L["SpecimenOrderItemRow.stories.test.tsx"]
+3M["SpecimenSetSelector.stories.test.tsx"]
+3N["SpecimenSetSelector.test.tsx"]
+3O["SpecimenSetsList.stories.test.tsx"]
+3P["SpecimenSetsList.test.tsx"]
+3Q["SpecimenTypeSelector.stories.test.tsx"]
+3R["SpecimenUrgencySelector.stories.test.tsx"]
+3S["useSpecimenSections.test.tsx"]
+end
+subgraph 3T["types"]
+3U["specimen-order-entry.type.ts"]
+end
+end
+end
+subgraph 1K["_shared"]
+subgraph 1L["components"]
+subgraph 1M["organisms"]
+1N["RightPanel.tsx"]
+1X["OrderListItem.tsx"]
+end
+subgraph 1O["molecules"]
+1P["EmptyOrderMessage.tsx"]
+1Q["ImagingHistoryList.tsx"]
+1R["ImagingSetsList.tsx"]
+1S["ImagingSubTabs.tsx"]
+1U["OrderGroupCollapsible.tsx"]
+29["OrderListHeaderActions.tsx"]
+2A["OrderTypeSection.tsx"]
+end
+end
+subgraph 1V["utils"]
+1W["orderFormatters.ts"]
+2J["allergyCheck.ts"]
+2K["orderCategorization.ts"]
+2L["orderDisplayHelpers.ts"]
+end
+subgraph 2B["data"]
+2C["rightPanelData.ts"]
+end
+subgraph 2D["hooks"]
+2E["useImagingOrders.ts"]
+2F["useImagingPanelData.ts"]
+2G["useOrderDialogs.ts"]
+2H["useOrderEditing.ts"]
+2I["useOrderGrouping.ts"]
+end
+end
+subgraph 1Y["08_imaging-order"]
+subgraph 1Z["01_imaging-setting"]
+subgraph 20["components"]
+subgraph 21["organisms"]
+22["ImagingOrderEditForm.tsx"]
+end
+subgraph 27["molecules"]
+28["ImagingVisitDateInput.tsx"]
+2M["ContrastAllergyConfirmDialog.tsx"]
+end
+end
+subgraph 23["stores"]
+24["imagingPresets.ts"]
+end
+subgraph 25["styles"]
+26["commonStyles.ts"]
+end
+end
+end
+end
+end
+subgraph 7["shared"]
+subgraph 8["plugins"]
+9["axios.client.ts"]
+end
+subgraph E["components"]
+subgraph F["atoms"]
+G["button.tsx"]
+H["utils.ts"]
+X["label.tsx"]
+Z["badge.tsx"]
+10["select.tsx"]
+15["scroll-area.tsx"]
+17["input.tsx"]
+19["textarea.tsx"]
+1D["checkbox.tsx"]
+1E["collapsible.tsx"]
+1F["date-picker-calendar.tsx"]
+1G["popover.tsx"]
+1H["radio-group.tsx"]
+1T["tabs.tsx"]
+2N["alert-dialog.tsx"]
+end
+end
+subgraph I["i18n"]
+J["ja.ts"]
+subgraph K["ja"]
+L["auth.ts"]
+M["common.ts"]
+N["deptInstruction.ts"]
+O["diagnosis.ts"]
+P["examination.ts"]
+Q["karte.ts"]
+R["menu.ts"]
+S["orders.ts"]
+T["reception.ts"]
+U["sideMenu.ts"]
+end
+end
+end
+end
+6-->9
+D-->G
+D-->J
+G-->H
+J-->L
+J-->M
+J-->N
+J-->O
+J-->P
+J-->Q
+J-->R
+J-->S
+J-->T
+J-->U
+V-->G
+W-->G
+W-->X
+X-->H
+Y-->Z
+Y-->10
+Z-->H
+10-->H
+11-->X
+11-->10
+12-->G
+12-->X
+14-->D
+14-->V
+14-->15
+14-->J
+15-->H
+16-->V
+16-->W
+16-->11
+16-->G
+16-->17
+16-->X
+16-->15
+17-->H
+18-->12
+18-->17
+18-->X
+18-->19
+19-->H
+1A-->6
+1A-->1C
+1A-->Z
+1A-->G
+1A-->1D
+1A-->1E
+1A-->1F
+1A-->17
+1A-->X
+1A-->1G
+1A-->1H
+1C-->6
+1D-->H
+1F-->G
+1F-->H
+1G-->H
+1H-->H
+1I-->1C
+1I-->1J
+1I-->1N
+1I-->G
+1I-->J
+1N-->1P
+1N-->1Q
+1N-->1R
+1N-->1S
+1N-->1U
+1N-->29
+1N-->2A
+1N-->2C
+1N-->2E
+1N-->2F
+1N-->2G
+1N-->2H
+1N-->2I
+1N-->2J
+1N-->2K
+1N-->2L
+1N-->C
+1N-->Y
+1N-->1A
+1N-->2M
+1N-->G
+1R-->Z
+1R-->10
+1S-->1T
+1T-->H
+1U-->1W
+1U-->1X
+1U-->Z
+1U-->G
+1U-->1D
+1U-->1E
+1U-->1F
+1U-->X
+1U-->1G
+1U-->10
+1U-->19
+1X-->22
+1X-->G
+1X-->19
+22-->24
+22-->26
+22-->28
+22-->Z
+22-->G
+22-->1D
+22-->1E
+22-->17
+22-->X
+22-->1H
+22-->10
+28-->1D
+28-->17
+28-->X
+29-->G
+2A-->1W
+2A-->1X
+2A-->Z
+2A-->G
+2M-->2N
+2M-->G
+2M-->X
+2M-->19
+2N-->G
+2N-->H
+2O-->6
+2P-->6
+2P-->1C
+2Q-->1I
+2S-->2Q
+2S-->2V
+2X-->C
+2Y-->D
+2Z-->V
+30-->W
+31-->Y
+32-->11
+33-->12
+35-->14
+36-->16
+37-->18
+38-->1A
+38-->2V
+39-->1I
+39-->2V
+3B-->2S
+3C-->35
+3D-->36
+3E-->2X
+3F-->C
+3G-->2Y
+3H-->37
+3I-->38
+3I-->2V
+3J-->6
+3K-->39
+3K-->2V
+3L-->2Z
+3M-->30
+3N-->W
+3O-->31
+3P-->Y
+3Q-->32
+3R-->33
+3S-->1J

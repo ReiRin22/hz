@@ -1,0 +1,204 @@
+/* Harz Menu - Accordion Styles */
+/* このCSSファイルは現在仮置きしているpage.tsxのスタイルとなるため本実装の際は消してください。 */
+
+.harz-menu {
+  font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  padding: 32px 40px;
+  max-width: 960px;
+  margin: 0 auto;
+  color: #333;
+}
+
+.harz-menu h1 {
+  color: #1565c0;
+  font-size: 2rem;
+  margin-bottom: 24px;
+  font-weight: 700;
+  border-bottom: 3px solid #1565c0;
+  padding-bottom: 12px;
+}
+
+/* ── LV1 group ─────────────────────────── */
+.lv1-group {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.lv1-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  user-select: none;
+  transition: filter 0.15s;
+}
+
+.lv1-header:hover {
+  filter: brightness(0.95);
+}
+
+.lv1-header .chevron {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  color: #666;
+}
+
+.lv1-header.open .chevron {
+  transform: rotate(90deg);
+}
+
+/* LV1 background colors (16 groups) */
+.color-01 { background-color: #e3f2fd; }
+.color-02 { background-color: #fff9c4; }
+.color-03 { background-color: #e8f5e9; }
+.color-04 { background-color: #fce4ec; }
+.color-05 { background-color: #e8eaf6; }
+.color-06 { background-color: #fff3e0; }
+.color-07 { background-color: #f3e5f5; }
+.color-08 { background-color: #e0f7fa; }
+.color-09 { background-color: #f1f8e9; }
+.color-10 { background-color: #fbe9e7; }
+.color-11 { background-color: #e0f2f1; }
+.color-12 { background-color: #f9fbe7; }
+.color-13 { background-color: #ede7f6; }
+.color-14 { background-color: #fff8e1; }
+.color-15 { background-color: #eceff1; }
+.color-16 { background-color: #e8f4f8; }
+
+/* ── LV1 content (LV2 groups inside) ───── */
+.lv1-content {
+  background-color: #fafafa;
+  padding: 4px 8px 8px 8px;
+  display: none;
+}
+
+.lv1-content.open {
+  display: block;
+}
+
+/* ── LV2 group ─────────────────────────── */
+.lv2-group {
+  margin: 4px 0;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lv2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.7);
+  user-select: none;
+  transition: background-color 0.15s;
+  border-radius: 4px;
+}
+
+.lv2-header:hover {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.lv2-header .chevron {
+  font-size: 0.65rem;
+  transition: transform 0.2s;
+  color: #888;
+}
+
+.lv2-header.open .chevron {
+  transform: rotate(90deg);
+}
+
+/* LV2 border colors matching parent LV1 */
+.color-01 .lv2-group { border-left-color: #90caf9; }
+.color-02 .lv2-group { border-left-color: #fff176; }
+.color-03 .lv2-group { border-left-color: #a5d6a7; }
+.color-04 .lv2-group { border-left-color: #f48fb1; }
+.color-05 .lv2-group { border-left-color: #9fa8da; }
+.color-06 .lv2-group { border-left-color: #ffcc80; }
+.color-07 .lv2-group { border-left-color: #ce93d8; }
+.color-08 .lv2-group { border-left-color: #80deea; }
+.color-09 .lv2-group { border-left-color: #c5e1a5; }
+.color-10 .lv2-group { border-left-color: #ffab91; }
+.color-11 .lv2-group { border-left-color: #80cbc4; }
+.color-12 .lv2-group { border-left-color: #e6ee9c; }
+.color-13 .lv2-group { border-left-color: #b39ddb; }
+.color-14 .lv2-group { border-left-color: #ffe082; }
+.color-15 .lv2-group { border-left-color: #b0bec5; }
+.color-16 .lv2-group { border-left-color: #81d4fa; }
+
+/* ── LV2 content (LV3 sections inside) ── */
+.lv2-content {
+  padding: 2px 0 4px 16px;
+  display: none;
+}
+
+.lv2-content.open {
+  display: block;
+}
+
+/* ── LV3 section label ─────────────────── */
+.lv3-label {
+  font-size: 0.8rem;
+  color: #666;
+  padding: 4px 8px 2px 8px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ── Feature items ─────────────────────── */
+.feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 8px;
+}
+
+.feature-list li {
+  padding: 3px 0;
+}
+
+.feature-list li a {
+  display: inline-block;
+  font-size: 0.825rem;
+  color: #1565c0;
+  text-decoration: none;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background-color 0.12s;
+}
+
+.feature-list li a:hover {
+  background-color: #e3f2fd;
+  text-decoration: underline;
+}
+
+.feature-list li span {
+  font-size: 0.825rem;
+  color: #999;
+  padding: 2px 6px;
+}
+
+/* implemented badge */
+.feature-list li a::before {
+  content: "●";
+  font-size: 0.5rem;
+  color: #42a5f5;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.feature-list li span::before {
+  content: "○";
+  font-size: 0.5rem;
+  color: #ccc;
+  margin-right: 4px;
+  vertical-align: middle;
+}

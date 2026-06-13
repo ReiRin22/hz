@@ -1,0 +1,328 @@
+<mxfile host="Claude" modified="2026-06-09T00:00:00.000Z" agent="Claude Code" version="1.0">
+  <diagram id="diagram-1" name="REC005 Screen Transition">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;【REC005】診療記録情報参照機能　画面遷移図&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Main Screen (Center) -->
+        <mxCell id="main-screen" value="&lt;div&gt;&lt;b&gt;【REC005】&lt;/b&gt;&lt;/div&gt;診療記録情報参照" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="500" y="180" width="400" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Tab 1: Records Tab -->
+        <mxCell id="tab-records" value="&lt;b&gt;診療記録タブ&lt;/b&gt;&lt;br&gt;（3カラムレイアウト）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="220" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Tab 2: Overview Tab -->
+        <mxCell id="tab-overview" value="&lt;b&gt;診療オーバービュー&lt;/b&gt;&lt;br&gt;（マトリクス表示）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="300" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Tab 3: Vital/Test Graph Tab -->
+        <mxCell id="tab-graph" value="&lt;b&gt;バイタル・検査グラフ&lt;/b&gt;&lt;br&gt;（時系列グラフ表示）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="380" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Tab transitions (within main screen) -->
+        <mxCell id="trans-tab12" value="タブ押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="tab-records" target="tab-overview" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-tab21" value="タブ押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="tab-overview" target="tab-records" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="330"/>
+              <mxPoint x="490" y="250"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-tab23" value="タブ押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="tab-overview" target="tab-graph" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="trans-tab32" value="タブ押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="tab-graph" target="tab-overview" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="410"/>
+              <mxPoint x="490" y="330"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Dialogs/Modal Screens (Right side) -->
+        <mxCell id="dialog-patient-search" value="&lt;b&gt;患者検索ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="100" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-diagnosis-reg" value="&lt;b&gt;病名登録ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="170" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-external-records" value="&lt;b&gt;外部医療機関&lt;/b&gt;&lt;br&gt;&lt;b&gt;情報参照ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="240" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-health-checkup" value="&lt;b&gt;健康診断情報&lt;/b&gt;&lt;br&gt;&lt;b&gt;参照ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="310" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-medication-history" value="&lt;b&gt;服薬歴参照&lt;/b&gt;&lt;br&gt;&lt;b&gt;ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="380" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-test-results" value="&lt;b&gt;検査結果参照&lt;/b&gt;&lt;br&gt;&lt;b&gt;ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="450" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-image-viewer" value="&lt;b&gt;画像ビューア&lt;/b&gt;&lt;br&gt;&lt;b&gt;ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="520" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-medical-info-sharing" value="&lt;b&gt;医療情報共有&lt;/b&gt;&lt;br&gt;&lt;b&gt;設定ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="590" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dialog-set-management" value="&lt;b&gt;セット管理&lt;/b&gt;&lt;br&gt;&lt;b&gt;ダイアログ&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="660" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Left side: Settings and Alerts -->
+        <mxCell id="panel-settings" value="&lt;b&gt;設定パネル&lt;/b&gt;&lt;br&gt;（設定アイコン押下）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="280" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="panel-alerts" value="&lt;b&gt;アラート一覧&lt;/b&gt;&lt;br&gt;（アラート押下）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="360" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="screen-logout" value="&lt;b&gt;ログアウト確認&lt;/b&gt;&lt;br&gt;（ログアウト押下）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="440" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Transitions from main to dialogs (Right) -->
+        <mxCell id="trans-to-patient-search" value="患者検索&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-patient-search" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="200"/>
+              <mxPoint x="950" y="125"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-diagnosis-reg" value="病名登録&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-diagnosis-reg" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="220"/>
+              <mxPoint x="950" y="195"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-external" value="外部医療機関&lt;br&gt;情報ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-external-records" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="250"/>
+              <mxPoint x="950" y="265"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-health" value="健康診断&lt;br&gt;情報ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-health-checkup" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="290"/>
+              <mxPoint x="950" y="335"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-medication" value="服薬歴&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-medication-history" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="340"/>
+              <mxPoint x="950" y="405"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-test" value="検査結果&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-test-results" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="390"/>
+              <mxPoint x="950" y="475"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-image" value="画像閲覧&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-image-viewer" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="440"/>
+              <mxPoint x="950" y="545"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-sharing" value="医療情報共有&lt;br&gt;バッジ押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-medical-info-sharing" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="490"/>
+              <mxPoint x="950" y="615"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-set" value="セット管理&lt;br&gt;ボタン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="dialog-set-management" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="540"/>
+              <mxPoint x="950" y="685"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Transitions from main to left panels -->
+        <mxCell id="trans-to-settings" value="設定アイコン&lt;br&gt;押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="panel-settings" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="260"/>
+              <mxPoint x="450" y="305"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-alerts" value="アラート&lt;br&gt;アイコン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="panel-alerts" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="320"/>
+              <mxPoint x="450" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="trans-to-logout" value="ログアウト&lt;br&gt;アイコン押下" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="main-screen" target="screen-logout" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="380"/>
+              <mxPoint x="450" y="465"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Return transitions (dashed) -->
+        <mxCell id="return-patient-search" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-patient-search" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="125"/>
+              <mxPoint x="970" y="180"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="return-diagnosis-reg" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-diagnosis-reg" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-external" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-external-records" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-health" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-health-checkup" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-medication" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-medication-history" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-test" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-test-results" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-image" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-image-viewer" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-sharing" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-medical-info-sharing" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-set" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="dialog-set-management" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="return-settings" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="panel-settings" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="305"/>
+              <mxPoint x="430" y="240"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="return-alerts" value="閉じる" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="panel-alerts" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="385"/>
+              <mxPoint x="430" y="300"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="return-logout" value="キャンセル" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" source="screen-logout" target="main-screen" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="465"/>
+              <mxPoint x="430" y="360"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#495057;" vertex="1" parent="1">
+          <mxGeometry x="120" y="580" width="200" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-title" value="&lt;b&gt;凡例&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="590" width="200" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-main" value="メイン画面" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="140" y="620" width="160" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend-trans-solid" value="画面遷移" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="665" as="sourcePoint"/>
+            <mxPoint x="300" y="665" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend-trans-dashed" value="戻る" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#000000;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=9;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="685" as="sourcePoint"/>
+            <mxPoint x="300" y="685" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Note -->
+        <mxCell id="note-tabs" value="&lt;b&gt;タブ構成&lt;/b&gt;&lt;br&gt;1. 診療記録タブ（3カラム）&lt;br&gt;2. 診療オーバービュータブ（マトリクス）&lt;br&gt;3. バイタル・検査グラフタブ（時系列）" style="text;html=1;strokeColor=#94a3b8;fillColor=#f8fafc;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="120" y="720" width="240" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note-dialogs" value="&lt;b&gt;ダイアログ一覧&lt;/b&gt;&lt;br&gt;患者検索・病名登録・外部医療機関情報&lt;br&gt;健康診断情報・服薬歴・検査結果&lt;br&gt;画像ビューア・医療情報共有・セット管理" style="text;html=1;strokeColor=#94a3b8;fillColor=#f8fafc;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="360" width="200" height="90" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

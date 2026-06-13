@@ -1,0 +1,75 @@
+{
+  "common": {
+    "button": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "search": "検索",
+      "register": "登録",
+      "update": "更新",
+      "confirm": "確認",
+      "back": "戻る",
+      "next": "次へ",
+      "close": "閉じる",
+      "clear": "クリア",
+      "submit": "送信",
+      "reset": "リセット"
+    },
+    "label": {
+      "patientId": "患者ID",
+      "patientName": "患者氏名",
+      "birthDate": "生年月日",
+      "gender": "性別",
+      "age": "年齢",
+      "phoneNumber": "電話番号",
+      "address": "住所",
+      "email": "メールアドレス",
+      "date": "日付",
+      "time": "時刻",
+      "status": "ステータス",
+      "remarks": "備考"
+    },
+    "gender": {
+      "male": "男性",
+      "female": "女性",
+      "other": "その他",
+      "unknown": "不明"
+    },
+    "status": {
+      "active": "有効",
+      "inactive": "無効",
+      "pending": "保留中",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    },
+    "message": {
+      "loading": "読み込み中...",
+      "noData": "データがありません",
+      "error": "エラーが発生しました",
+      "success": "正常に処理されました",
+      "confirmDelete": "削除してもよろしいですか？",
+      "confirmSave": "保存してもよろしいですか？",
+      "required": "必須項目です",
+      "invalidFormat": "形式が正しくありません"
+    },
+    "validation": {
+      "required": "{field}は必須です",
+      "minLength": "{field}は{min}文字以上で入力してください",
+      "maxLength": "{field}は{max}文字以内で入力してください",
+      "pattern": "{field}の形式が正しくありません",
+      "email": "メールアドレスの形式が正しくありません",
+      "phone": "電話番号の形式が正しくありません",
+      "date": "日付の形式が正しくありません"
+    },
+    "error": {
+      "networkError": "ネットワークエラーが発生しました",
+      "serverError": "サーバーエラーが発生しました",
+      "notFound": "データが見つかりません",
+      "unauthorized": "認証が必要です",
+      "forbidden": "アクセス権限がありません",
+      "timeout": "タイムアウトしました",
+      "unknown": "不明なエラーが発生しました"
+    }
+  }
+}

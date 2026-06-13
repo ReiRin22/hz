@@ -1,0 +1,85 @@
+graph TB
+    Start(["/implement 実行開始"])
+    Start --> SessionLoad["📂 セッション開始時の読み込み<br/>(9ファイル必須)"]
+    SessionLoad --> Phase0["Phase 0: スコープ確定<br/>T0-1〜T0-6"]
+
+    Phase0 -->|"state.md更新"| Stop0["⏹ セッション終了<br/>(次セッションで再開)"]
+    Stop0 --> Phase1["Phase 1: 基盤整備<br/>T1-1〜T1-3"]
+
+    Phase1 -->|"state.md更新"| Stop1["⏹ セッション終了"]
+    Stop1 --> Phase2["Phase 2: API・Repository<br/>T2-1〜T2-2"]
+
+    Phase2 -->|"state.md更新"| Stop2["⏹ セッション終了"]
+    Stop2 --> Phase3["Phase 3: 状態管理<br/>T3-1"]
+
+    Phase3 -->|"state.md更新"| Stop3["⏹ セッション終了"]
+    Stop3 --> Phase4["Phase 4: Hook層<br/>T4-1"]
+
+    Phase4 -->|"state.md更新"| Stop4["⏹ セッション終了"]
+    Stop4 --> Phase5["Phase 5: コンポーネント層<br/>T5-1〜T5-3"]
+
+    Phase5 -->|"state.md更新"| Stop5["⏹ セッション終了"]
+    Stop5 --> Phase6["Phase 6: 機能実装<br/>T6-1〜T6-3"]
+
+    Phase6 -->|"state.md更新"| Stop6["⏹ セッション終了"]
+    Stop6 --> Phase7["Phase 7: バリデーション<br/>T7-1〜T7-3"]
+
+    Phase7 -->|"state.md更新"| Stop7["⏹ セッション終了"]
+    Stop7 --> Phase8["Phase 8: Storybook<br/>T8-1〜T8-5"]
+
+    Phase8 -->|"state.md更新"| Stop8["⏹ セッション終了"]
+    Stop8 --> Phase9["Phase 9: MSW/Vitest<br/>T9-1〜T9-4"]
+
+    Phase9 -->|"state.md更新"| Stop9["⏹ セッション終了"]
+    Stop9 --> Phase10["Phase 10: E2E/ドキュメント<br/>T10-1〜T10-7"]
+
+    Phase10 -->|"state.md更新"| Complete["✅ 完了"]
+
+    %% Phase完了後の検証
+    Phase0 -.->|"impl-reviewer"| Review0["app-impl-reviewer<br/>★foundation-boundary<br/>★cross-layer-rules"]
+    Phase1 -.->|"impl-reviewer"| Review1["app-impl-reviewer<br/>+phase1-test"]
+    Phase2 -.->|"impl-reviewer"| Review2["app-impl-reviewer<br/>+phase2-test"]
+    Phase3 -.->|"impl-reviewer"| Review3["app-impl-reviewer<br/>+phase3-test"]
+    Phase4 -.->|"impl-reviewer"| Review4["app-impl-reviewer<br/>+phase4-test"]
+    Phase5 -.->|"impl-reviewer"| Review5["app-impl-reviewer<br/>+phase5-test"]
+    Phase6 -.->|"impl-reviewer"| Review6["app-impl-reviewer<br/>+phase6-test"]
+    Phase7 -.->|"impl-reviewer"| Review7["app-impl-reviewer<br/>+phase7-test"]
+    Phase8 -.->|"impl-reviewer"| Review8["app-impl-reviewer<br/>+phase8-test"]
+    Phase9 -.->|"impl-reviewer"| Review9["app-impl-reviewer<br/>+phase9-test"]
+    Phase10 -.->|"impl-reviewer"| Review10["app-impl-reviewer<br/>+phase10-test"]
+
+    Review0 -.-> Stop0
+    Review1 -.-> Stop1
+    Review2 -.-> Stop2
+    Review3 -.-> Stop3
+    Review4 -.-> Stop4
+    Review5 -.-> Stop5
+    Review6 -.-> Stop6
+    Review7 -.-> Stop7
+    Review8 -.-> Stop8
+    Review9 -.-> Stop9
+    Review10 -.-> Complete
+
+    style Start fill:#e1f5ff
+    style Complete fill:#c8e6c9
+    style Stop0 fill:#fff9c4
+    style Stop1 fill:#fff9c4
+    style Stop2 fill:#fff9c4
+    style Stop3 fill:#fff9c4
+    style Stop4 fill:#fff9c4
+    style Stop5 fill:#fff9c4
+    style Stop6 fill:#fff9c4
+    style Stop7 fill:#fff9c4
+    style Stop8 fill:#fff9c4
+    style Stop9 fill:#fff9c4
+    style Review0 fill:#ffccbc
+    style Review1 fill:#ffccbc
+    style Review2 fill:#ffccbc
+    style Review3 fill:#ffccbc
+    style Review4 fill:#ffccbc
+    style Review5 fill:#ffccbc
+    style Review6 fill:#ffccbc
+    style Review7 fill:#ffccbc
+    style Review8 fill:#ffccbc
+    style Review9 fill:#ffccbc
+    style Review10 fill:#ffccbc

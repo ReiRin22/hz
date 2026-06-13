@@ -1,0 +1,649 @@
+export const karte = {
+  // KarteTabs
+  karteTabs: {
+    records:  "診療記録",
+    overview: "診療オーバービュー",
+    stats:    "バイタル・検査グラフ",
+  },
+
+  globalMenuNav: {
+    // CollapseButton
+    collapseButton: {
+      expandAria: "メニューを展開",
+      collapseAria: "メニューを折りたたむ",
+      expandTooltip: "展開",
+    },
+
+    // PatientInfoButton
+    patientInfoButton: {
+      label: "患者情報",
+    },
+
+    // SetButton
+    setButton: {
+      label: "セット",
+      tooltipSub: "Myセット・セットを選択",
+    },
+
+    // MenuItemButton
+    menuItemButton: {
+      moreItems: (count: number) => `...他${count}件`,
+    },
+
+    // PatientInfoDialog
+    patientInfoDialog: {
+      title: "患者基本情報",
+      description: "現在選択中の患者の基本情報",
+      patientId: "患者ID",
+      visitDate: "診察日",
+      name: "氏名",
+      ageGender: "年齢・性別",
+      male: "男性",
+      female: "女性",
+      ageSuffix: "歳",
+      allergies: "アレルギー情報",
+    },
+
+    // SetSelectionDialog
+    setSelectionDialog: {
+      title: "セット選択",
+      description: "Myセットまたはセットを選択してください",
+      addBtn: "追加",
+      closeBtn: "閉じる",
+      mySetTab: "Myセット",
+      compositeSetTab: "セット",
+      orderTypeLabel: "オーダー種別",
+      prescriptionOption: "処方オーダー",
+      injectionOption: "注射オーダー",
+      labOption: "検体オーダー",
+    },
+
+    // AddMySetDialog
+    addMySetDialog: {
+      title: "Myセット追加",
+      description: "新しいMyセットを作成します",
+      setNameLabel: "セット名",
+      required: "*",
+      setNamePlaceholder: "セット名を入力してください",
+      orderSelectLabel: "オーダー選択",
+      selectedLabel: (count: number) => `選択中のオーダー (${count}件)`,
+      cancelBtn: "キャンセル",
+      saveBtn: "登録",
+    },
+
+    // FetchErrorDialog
+    fetchErrorDialog: {
+      title: "データ取得エラー",
+      closeBtn: "閉じる",
+    },
+  },
+
+  // rightSideMenuNav
+  rightSideMenuNav: {
+    // CollapsibleMenuButton
+    collapsibleMenuButton: {
+      collapseTooltip: "折りたたむ",
+      expandTooltip: "展開",
+    },
+
+    // menuItems（data/menuItems.tsx のラベル）
+    menuItems: {
+      wardMap: "病棟マップ",
+      receptionList: "受診者一覧",
+      bulletinBoard: "院内掲示板",
+      memo: "伝言メモ",
+      inventory: "在庫管理",
+      systemSettings: "システム設定",
+    },
+
+    // BulletinBoardDialog
+    bulletinBoardDialog: {
+      title: "院内掲示板",
+      closeBtn: "閉じる",
+      authorPrefix: (author: string) => `投稿者: ${author}`,
+    },
+
+    // MemoDialog
+    memoDialog: {
+      titleList: "伝言メモ",
+      titleDetail: "伝言詳細",
+      titleCreate: "新規伝言メモ作成",
+      backBtn: "戻る",
+      backToListBtn: "一覧に戻る",
+      addBtn: "追加",
+      closeBtn: "閉じる",
+    },
+
+    // MemoListView
+    memoListView: {
+      receivedTab: "受信",
+      sentTab: "送信",
+      confirmedBadge: "確認済み",
+      fromPrefix: (from: string) => `送信: ${from}`,
+      toPrefix: (to: string) => `宛先: ${to}`,
+    },
+
+    // MemoDetailView
+    memoDetailView: {
+      titleLabel: "タイトル",
+      contentLabel: "内容",
+      fromLabel: "送信者",
+      toLabel: "宛先",
+      datetimeLabel: "日時",
+      confirmBtn: "確認",
+    },
+
+    // MemoCreateForm
+    memoCreateForm: {
+      toLabel: "宛先",
+      toPlaceholder: "例: 看護部",
+      titleLabel: "タイトル",
+      titlePlaceholder: "例: 患者検査結果の確認依頼",
+      contentLabel: "メモ内容",
+      contentPlaceholder: "伝言内容を入力してください",
+      cancelBtn: "キャンセル",
+      submitBtn: "送信",
+      selectedDepts: (depts: string) => `選択中: ${depts}`,
+    },
+  },
+
+  // ---- REC005 診療情報参照 ----
+  recordReference: {
+    // RecordSearchBar
+    recordSearchBar: {
+      keyword: "キーワード:",
+      placeholder: "スペース区切りで複数検索",
+      andMode: "AND検索",
+      orMode: "OR検索",
+    },
+
+    // RecordFilterSection
+    recordFilterSection: {
+      professionLabel: "職種:",
+      recordTypeLabel: "種別:",
+      visitTypeLabel: "入外:",
+      periodLabel: "期間:",
+      allOption: "すべて",
+      inpatient: "入院",
+      outpatient: "外来",
+      startDatePlaceholder: "開始日",
+      endDatePlaceholder: "終了日",
+      dateSeparator: "～",
+      clearStartDate: "開始日をクリア",
+      clearEndDate: "終了日をクリア",
+    },
+
+    // RecordTreeItem / RecordMetadata（入外バッジ共通）
+    recordTreeItem: {
+      inpatient: "入",
+      outpatient: "外",
+    },
+
+    // SOAPRecordDisplay
+    soapRecordDisplay: {
+      title: "SOAP形式記録",
+      subjectiveLabel: "S（主観的情報）",
+      objectiveLabel: "O（客観的情報）",
+      assessmentLabel: "A（評価）",
+      planLabel: "P（計画）",
+    },
+
+    // VitalSignsDisplay
+    vitalSignsDisplay: {
+      bloodPressure: "血圧",
+      pulse: "脈拍",
+      temperature: "体温",
+      respiratoryRate: "呼吸数",
+      oxygenSaturation: "SpO2",
+    },
+
+    // RecordMetadata
+    recordMetadata: {
+      recordTypeLabel: "記録種別",
+      dateLabel: "日付",
+      timeLabel: "時刻",
+      authorLabel: "記録者",
+      insuranceLabel: "保険情報",
+    },
+
+    // HistoricalRecordsPanel
+    historicalRecordsPanel: {
+      title: "時系列記録",
+      emptyMessage: "該当する記録が見つかりません",
+      emptySubMessage: "検索条件を変更してください",
+    },
+
+    // RecordDetailPanel
+    recordDetailPanel: {
+      title: "記録詳細",
+      closeBtn: "閉じる",
+      applyBtn: "Do",
+      invalidMessage: "記録データが無効または見つかりません",
+      waitingTitle: "記録詳細表示エリア",
+      waitingDesc: "左側の時系列記録から項目を選択すると詳細情報が表示されます",
+      waitingLink: "診療オーバービューからも記録を再利用できます",
+      waitingStatus: "待機中",
+      schemaLabel: "シェーマ",
+      schemaAlt: "シェーマ画像",
+    },
+  },
+
+  // patientHeader
+  patientHeader: {
+    patientHeaderDisplay: {
+      // PatientIdentityBlock
+      patientIdentityBlock: {
+        showAria: 'プライバシーモードを解除',
+        hideAria: 'プライバシーモードを有効化',
+        masked: '***',
+        privacyName: '匿名患者',
+      },
+
+      // PatientBasicInfoBlock
+      patientBasicInfoBlock: {
+        birthDateLabel: '生年月日:',
+        ageGenderLabel: '年齢/性別:',
+        masked: '***',
+        ageSuffix: (age: number, gender: string) => `${age}歳 ${gender}`,
+        memoBtn: '診療メモ 0件',
+      },
+
+      // PatientConsultationBlock（列1: 病室・入外・保険）
+      patientConsultationBlock: {
+        wardLabel: '病室:',
+        admissionLabel: '入/外:',
+        insuranceLabel: '保険:',
+        admissionType: {
+          inpatient: '入院',
+          outpatient: '外来',
+        },
+      },
+
+      // PatientSystemStatusBlock（列2: 診療科・主治医・指示医）
+      patientSystemStatusBlock: {
+        departmentLabel: '診療科:',
+        doctorLabel: '主治医:',
+        proxyDoctorLabel: '指示医:',
+        proxyDoctorEmpty: '未設定',
+      },
+
+      // PatientStatusActionsBlock（列3: 診察開始/終了・処方箋・情報共有）
+      patientStatusActionsBlock: {
+        consultationLabel: '診察:',
+        consultingLabel: '診察中',
+        consultationStart: '診察開始',
+        consultationEnd: '診察終了',
+        prescriptionLabel: '処方箋:',
+        prescriptionStatus: {
+          electronic: '電子',
+          paper: '紙',
+          disconnected: '未連携',
+        },
+        sharingLabel: '情報共有:',
+        sharingStatus: {
+          'full-consent': 'すべて同意',
+          'partial-consent': '一部同意',
+          'verbal-consent': '口頭同意',
+          'no-consent': '同意なし',
+        },
+      },
+
+      // PatientAlertBlock
+      patientAlertBlock: {
+        allergyLabel: 'アレルギー',
+        infectionLabel: '感染症',
+      },
+
+      // PatientHeaderDisplayFeature
+      patientHeaderDisplayFeature: {
+        detailBtn: '詳細表示',
+        loadingText: '読み込み中...',
+        errorTitle: 'データ取得エラー',
+        errorText: '患者情報の取得に失敗しました。再度お試しください。',
+      },
+
+      // PatientDetailDialog
+      patientDetailDialog: {
+        loadingText: '読み込み中...',
+        errorText: 'データ取得に失敗しました',
+      },
+
+      // PatientMemoDialog
+      patientMemoDialog: {
+        title: '患者メモ',
+        comingSoon: '（未実装）',
+      },
+
+      // PrescriptionSettingsDialog
+      prescriptionSettingsDialog: {
+        title: '処方箋発行形態',
+        titleIcon: '処方箋発行形態',
+        description: '患者の処方箋発行形態を設定します。',
+        patientLabel: (name: string, id: string) => `患者: ${name} (ID: ${id})`,
+        options: {
+          electronic: { title: '電子処方箋', description: '電子処方箋システムを使用（推奨）' },
+          paper: { title: '紙処方箋', description: '従来の紙ベースの処方箋で発行' },
+          disconnected: { title: 'システム未連携', description: 'システム障害時の一時的設定' },
+        },
+        recommended: '推奨',
+        cancel: 'キャンセル',
+        submit: '変更',
+        submitting: '変更中...',
+        successMessage: (title: string) => `処方箋発行形態を「${title}」に変更しました`,
+        successDescription: (name: string, id: string) => `患者: ${name} (ID: ${id})`,
+        errorMessage: '設定の変更に失敗しました',
+      },
+
+      // MedicalInfoSharingDialog
+      medicalInfoSharingDialog: {
+        title: '医療情報共有設定',
+        patientLabel: (name: string, id: string) => `患者: ${name} (ID: ${id})`,
+        options: {
+          'full-consent': { title: 'すべて同意', description: '医療情報共有サービスのすべての項目に同意' },
+          'partial-consent': { title: '一部同意', description: '選択した項目のみ医療情報を共有' },
+          'verbal-consent': { title: '口頭同意', description: '口頭で同意を確認' },
+          'no-consent': { title: '同意しない', description: '医療情報を共有しない（緊急時を除く）' },
+        },
+        recommended: '推奨',
+        detailSectionTitle: '共有する情報を選択',
+        consentItems: {
+          emergencyMedicalInfo: { label: '救急医療情報', description: '緊急時の既往歴・アレルギー情報' },
+          prescriptionHistory: { label: '処方歴', description: '過去の処方薬・服薬情報' },
+          diagnosticImages: { label: '診断画像', description: 'X線・CT・MRI等の画像' },
+          labResults: { label: '検査結果', description: '血液検査・尿検査等の結果' },
+          referralLetters: { label: '紹介状', description: '他院への紹介状・返書' },
+        },
+        notice: '医療情報共有サービスは、医療の質と安全性向上を目的としています。緊急時には同意に関わらず必要な情報が共有される場合があります。',
+        noticeLabel: '重要:',
+        cancel: 'キャンセル',
+        submit: '変更',
+        submitting: '変更中...',
+        successMessage: (title: string) => `医療情報共有設定を「${title}」に変更しました`,
+        successDescription: (name: string, id: string) => `患者: ${name} (ID: ${id})`,
+        errorMessage: '設定の変更に失敗しました',
+      },
+
+      // ProxyInputConfirmDialog
+      proxyInputConfirmDialog: {
+        title: '代理医師入力確認',
+        comingSoon: '（未実装）',
+      },
+
+      // PatientSearchDialog
+      patientSearchDialog: {
+        title: '患者検索',
+        comingSoon: '（未実装）',
+      },
+    },
+  },
+
+  // patientInfo
+  patientInfo: {
+
+    // RecordMetaInfo
+    recordMetaInfo: {
+      createdBy: '登録者',
+      createdAt: '登録日',
+      updatedBy: '更新者',
+      updatedAt: '更新日',
+    },
+
+    // SectionTable
+    sectionTable: {
+      addBtn: '追加',
+      deleteBtn: '削除',
+      empty: 'データがありません',
+    },
+
+    // DeleteConfirmDialog
+    deleteConfirmDialog: {
+      title: '削除の確認',
+      description: 'この項目を削除してもよいですか？この操作は取り消せません。',
+      descriptionWithName: (name: string) => `「${name}」を削除してもよいですか？この操作は取り消せません。`,
+      cancelBtn: 'キャンセル',
+      confirmBtn: '削除する',
+    },
+
+    // useToast
+    useToast: {
+      saveSuccess: '保存しました',
+      saveError: '保存に失敗しました',
+      deleteSuccess: '削除しました',
+    },
+
+    // BasicInfoTab
+    basicInfoTab: {
+      systemLinkedSection: '他システム連携情報（参照のみ）',
+      systemLinkedNote: '以下の項目は他システムと連携しているため、このシステムから変更できません。',
+      editableSection: '連絡先・その他',
+      admissionSection: '入院情報（参照のみ）',
+      patientId: '患者ID',
+      name: '氏名',
+      nameKana: '氏名（カナ）',
+      birthDate: '生年月日',
+      gender: '性別',
+      genderOptions: {
+        male: '男性',
+        female: '女性',
+        other: 'その他',
+      },
+      bloodType: '血液型',
+      bloodTypeUnknown: '不明',
+      bloodTypeFormat: (type: string) => `${type}型`,
+      insuranceNumber: '保険証番号',
+      address: '住所',
+      phone: '電話番号',
+      emergencyContact: '緊急連絡先氏名',
+      emergencyPhone: '緊急連絡先電話',
+      occupation: '職業',
+      nationality: '国籍',
+      religion: '宗教・信仰',
+      primaryDiagnosis: '主病名',
+      admissionDate: '入院日',
+      ward: '病棟',
+      room: '病室',
+    },
+
+    // AllergyHistoryTab
+    allergyHistoryTab: {
+      allergySection: 'アレルギー',
+      historySection: '既往歴',
+      surgerySection: '手術歴',
+      allergyColumns: {
+        allergen: 'アレルゲン',
+        reaction: '反応',
+        severity: '重症度',
+        confirmedDate: '確認日',
+      },
+      historyColumns: {
+        disease: '疾患名',
+        diagnosisDate: '診断日',
+        hospital: '医療機関',
+      },
+      surgeryColumns: {
+        surgeryName: '手術名',
+        surgeryDate: '手術日',
+        hospital: '医療機関',
+      },
+      severityOptions: {
+        mild: '軽度',
+        moderate: '中等度',
+        severe: '重度',
+      },
+    },
+
+    // VaccinationTab
+    vaccinationTab: {
+      columns: {
+        vaccineName: 'ワクチン名',
+        vaccinationDate: '接種日',
+        lotNumber: 'ロット番号',
+        administrator: '実施者',
+      },
+    },
+
+    // FamilyInfoTab
+    familyInfoTab: {
+      familySection: '家族一覧',
+      guarantorSection: '保証人情報',
+      familyColumns: {
+        name: '氏名',
+        relationship: '続柄',
+        phone: '電話番号',
+        birthDate: '生年月日',
+        address: '住所',
+        isEmergencyContact: '緊急連絡先',
+      },
+      guarantorColumns: {
+        name: '氏名',
+        relationship: '続柄',
+        phone: '電話番号',
+        address: '住所',
+        birthDate: '生年月日',
+        occupation: '職業',
+      },
+      yes: '○',
+      editBtn: '編集',
+      saveBtn: '保存',
+      cancelBtn: 'キャンセル',
+    },
+
+    // InfectionTab
+    infectionTab: {
+      readonlyNotice: '感染症情報の閲覧のみが許可されています。',
+      columns: {
+        infectionName: '感染症名',
+        testDate: '検査日',
+        result: '結果',
+      },
+      resultOptions: {
+        positive: '陽性',
+        negative: '陰性',
+        unknown: '不明',
+      },
+    },
+
+    // ImplantDeviceTab
+    implantDeviceTab: {
+      pacemakerSection: 'ペースメーカー',
+      aneurysmClipSection: '動脈瘤クリップ',
+      metalImplantSection: '体内埋込金属',
+      pacemakerColumns: {
+        deviceName: 'デバイス名',
+        manufacturer: 'メーカー',
+        implantDate: '植込日',
+        serialNumber: 'シリアル番号',
+      },
+      aneurysmClipColumns: {
+        location: '部位',
+        implantDate: '留置日',
+        hospital: '実施医療機関',
+      },
+      metalImplantColumns: {
+        partName: '部位',
+        materialName: '材質・製品名',
+        implantDate: '埋込日',
+      },
+    },
+
+    // LifestyleTab
+    lifestyleTab: {
+      smokingStatus: '喫煙状況',
+      smokingDetail: '詳細',
+      alcoholStatus: '飲酒状況',
+      alcoholDetail: '詳細',
+      exerciseHabit: '運動習慣',
+      sleepHours: '睡眠時間',
+      dietRestriction: '食事制限',
+      memo: 'メモ',
+      smokingOptions: {
+        never: '非喫煙',
+        former: '禁煙済み',
+        current: '現在喫煙中',
+      },
+      alcoholOptions: {
+        never: '飲まない',
+        occasional: '機会飲酒',
+        regular: '習慣的に飲む',
+      },
+      editBtn: '編集',
+      saveBtn: '保存',
+      cancelBtn: 'キャンセル',
+    },
+
+    // MedicalMemoTab
+    medicalMemoTab: {
+      readonlyNotice: '医療メモの閲覧のみが許可されています。',
+      columns: {
+        category: 'カテゴリ',
+        isImportant: '重要',
+        content: '内容',
+      },
+      important: '★重要',
+    },
+
+    // PhilosophyTab
+    philosophyTab: {
+      latestSection: '最新のACP・人生の最終段階の方針',
+      endOfLifeWish: '本人の意思・希望',
+      resuscitationWish: '蘇生処置',
+      artificialNutritionWish: '人工栄養',
+      mechanicalVentilationWish: '人工呼吸器',
+      decisionMaker: '意思決定代理人',
+      decisionMakerPhone: '連絡先',
+      memo: 'メモ',
+      wishOptions: {
+        do: '希望する',
+        doNot: '希望しない',
+        undecided: '未定',
+      },
+      editBtn: '編集',
+      saveBtn: '保存',
+      cancelBtn: 'キャンセル',
+      empty: 'ACPの記録がありません',
+    },
+
+    // AccessControlTab
+    accessControlTab: {
+      vipSection: 'VIP設定',
+      userAccessSection: 'ユーザーアクセス管理',
+      isVip: 'VIP患者',
+      vipOn: 'VIPに設定済み',
+      vipOff: '設定なし',
+      restrictionLevel: '閲覧制限レベル',
+      restrictionLevelOptions: {
+        none: 'なし',
+        partial: '一部制限',
+        full: '完全制限',
+      },
+      vipMemo: '備考',
+      userAccessColumns: {
+        userName: 'ユーザー名',
+        role: 'ロール',
+        canView: '参照',
+        canEdit: '編集',
+        grantedBy: '付与者',
+      },
+      yes: '○',
+      no: '×',
+      editBtn: '編集',
+      saveBtn: '保存',
+      cancelBtn: 'キャンセル',
+      revokeBtn: '取消',
+    },
+
+    // PatientInfoTabsFeature
+    patientInfoTabsFeature: {
+      title: '患者情報',
+      saveBtn: '保存',
+      cancelBtn: 'キャンセル',
+      saveSuccess: '保存しました',
+      noChanges: '変更はありません',
+      cancelDone: '変更を破棄しました',
+      cancelDialogTitle: '変更の破棄',
+      cancelDialogDesc: '保存していない変更があります。変更を破棄してもよいですか？',
+      cancelDialogBack: '編集を続ける',
+      cancelDialogConfirm: '破棄する',
+    },
+  },
+} as const;

@@ -1,0 +1,45 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-start",
+            "async": false,
+            "description": "Inject compact_resume from .steering/*/state.md at session start"
+          }
+        ]
+      }
+    ],
+
+    "beforeSubmitPrompt": [
+      {
+        "command": "node .claude/hooks/screen-code-detector.js",
+        "event": "beforeSubmitPrompt",
+        "description": "機能コード（例: RES002）検出時にディレクトリ階層情報を注入"
+      },
+      {
+        "command": "node .claude/hooks/omc-trigger.js",
+        "event": "beforeSubmitPrompt",
+        "description": "Detect /omc 3agents command and inject frontend detail design workflow"
+      },
+      {
+        "command": "node .claude/hooks/server-test-trigger.js",
+        "event": "beforeSubmitPrompt",
+        "description": "「サーバーテスト」入力時にlocalhost:3000自動テスト指示を注入"
+      },
+      {
+        "command": "node .claude/hooks/implement-trigger.js",
+        "event": "beforeSubmitPrompt",
+        "description": "任意コマンドの本文に 'implement' が含まれるとき implement.md ワークフローを注入"
+      },
+      {
+        "command": "node .claude/hooks/synchronizer-trigger.js",
+        "event": "beforeSubmitPrompt",
+        "description": "任意コマンドの本文に 'synchronizer' が含まれるとき synchronizer.md ワークフローを注入"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "KarteDomainService",
+  "dockerComposeFile": [
+    "../../docker-compose.yml"
+  ],
+  "service": "karte-domain-service",
+  "runServices": [
+    "frontend",
+    "bff",
+    "karte-domain-service",
+    "harz-db"
+  ],
+  "workspaceFolder": "/workspaces/harz",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "MS-CEINTL.vscode-language-pack-ja",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

@@ -1,0 +1,337 @@
+# OMC (oh-my-claudecode) 利用ガイド
+
+このファイルは、Harzプロジェクトでomcを使う際のコマンド例・hooks設定・structure.mdの読み込み・
+エージェント/スキル/コマンドの選択指針をまとめたものです。
+
+---
+
+## 0. インストール
+
+```
+/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+/plugin install oh-my-claudecode
+/omc-setup
+すべてyesで選択
+```
+
+---
+
+## 1. よく使うコマンド例
+
+omcのコマンドはすべて `/` から始まります。
+
+### プロジェクト起動系
+
+```
+/init                          # プロジェクト基盤を初期化する（最初の1回）
+/omc-setup                     # OMC環境のセットアップ（初回インストール後に実行）
+/omc-doctor                    # プラグインキャッシュのクリア・診断
+```
+
+### 設計フェーズ
+
+```
+/design 01_フロントエンド/F01_ログイン機能    # 機能のPRD・設計書を作成
+/design 02_アプリ基盤/system-design           # 基盤設計書を作成・更新
+/design refactor/BFF層のAPI命名統一           # リファクタリング設計
+```
+
+### 実装フェーズ
+
+```
+/implement 01_フロントエンド/F01_ログイン機能  # 機能を実装する
+/fix 01_フロントエンド/F01_ログイン機能 ログインボタンが押せない  # バグ修正
+```
+
+### 検証・レビュー
+
+```
+/review docs/01_アプリ/01_フロントエンド/F01_ログイン機能  # 仕様・実装のレビュー
+/poc 01_フロントエンド                         # 技術検証（PoC）の実施
+```
+
+### OMC特有のワークフロースキル
+
+```
+/oh-my-claudecode:autopilot    # 大きなタスクを自律実行（autopilotモード）
+/oh-my-claudecode:ralph        # ralphモード（反復実行・品質保証ループ）
+/oh-my-claudecode:ultrawork    # ulwキーワードでも起動。複雑タスクの徹底実行
+/oh-my-claudecode:ralplan      # 計画コンセンサス（反復プランニング）
+/oh-my-claudecode:deep-interview  # ソクラテス式ヒアリング（要件明確化）
+/oh-my-claudecode:cancel       # 実行中のOMCモードを停止する
+/skill list                    # 登録スキル一覧を表示
+/skill add {name}              # スキルを追加
+/learner                       # セッションからパターンを自動抽出
+```
+
+---
+
+## 2. hooksによる自動化設定
+
+### 2-1. hooksの種別と用途
+
+OMCが対応するhookイベント一覧：
+
+| イベント | 発火タイミング | Harzでの主な用途 |
+|---|---|---|
+| `session-start` | セッション開始時 | structure.md読み込み・フェーズ状態確認 |
+| `stop` | Claude応答完了時 | CLAUDE.mdのsession_progress更新促進 |
+| `keyword-detector` | プロンプト送信のたびに | コマンド種別の判定・skills/commands自動選択 |
+| `pre-tool-use` | ツール呼び出し前 | ファイル配置ルール違反の事前チェック |
+| `post-tool-use` | ツール呼び出し後 | フォーマット・lint自動実行 |
+| `ask-user-question` | Claudeがユーザーに質問時 | 通知連携（オプション） |
+
+### 2-2. Harz向けhooks設定（settings.json）
+
+`~/.claude/settings.json` または `.claude/settings.json` に追記：
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/keyword-router.js",
+            "description": "指示内容に応じてskills/commandsを自動選択"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/file-placement-checker.js",
+            "description": "structure.mdのファイル配置ルールを自動検証"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/session-progress-reminder.js",
+            "description": "セッション終了時にCLAUDE.mdのsession_progress更新をリマインド"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 2-3. keyword-router.js — 指示→skills/commands自動選択
+
+プロンプト内のキーワードを検出し、読み込むべきskillsとcommandsを`<system-reminder>`として注入する仕組み：
+
+```
+キーワード検出ルール（Harz固有）
+
+指示に含まれる語 → 読み込むskill / 有効化するcommand
+─────────────────────────────────────────────────────
+"設計" / "design" / "PRD"
+  → .claude/skills/samples-prd-writing/SKILL.md
+  → .claude/skills/samples-design-writing/SKILL.md
+  → .claude/commands/design.md
+
+"実装" / "implement" / "コーディング"
+  → .claude/skills/samples-steering/SKILL.md
+  → .claude/commands/implement.md
+
+"PoC" / "検証" / "poc"
+  → .claude/skills/arch-poc/SKILL.md
+  → .claude/commands/review.md (PoC完了確認)
+
+"バグ" / "fix" / "修正"
+  → .claude/skills/samples-steering/SKILL.md
+  → .claude/commands/fix.md
+
+"レビュー" / "review" / "整合性"
+  → .claude/commands/review.md
+
+"判断" / "委譲" / "エージェント"
+  → .claude/skills/common-decision-gate/SKILL.md
+
+"フロントエンド" / "画面" / "コンポーネント"
+  → structure.mdの読み込み（後述）
+```
+
+### 2-4. structure.md の読み込みタイミング
+
+`structure_1.md` / `structure_2.md` はフロントエンドのファイル配置を定義するドキュメントです。
+
+**読み込みが必要な場面：**
+
+| 指示のキーワード | 読み込むファイル |
+|---|---|
+| "フロントエンド" / "画面" / "UI" / "コンポーネント" | `docs/02_アプリ基盤/01_フロントエンド・BFF/02_詳細設計書/structure_1.md` |
+| "BFF" / "API" / "バックエンド連携" | `docs/02_アプリ基盤/01_フロントエンド・BFF/02_詳細設計書/structure_2.md` |
+| "ファイル配置" / "ディレクトリ" / "どこに置く" | 両方読み込む |
+
+**keyword-router.jsでの検出例（概念）：**
+
+```js
+const prompt = input.prompt || '';
+
+if (/フロントエンド|画面|UI|コンポーネント/.test(prompt)) {
+  injectContext('docs/02_アプリ基盤/01_フロントエンド・BFF/02_詳細設計書/structure_1.md');
+}
+if (/BFF|API連携|バックエンド/.test(prompt)) {
+  injectContext('docs/02_アプリ基盤/01_フロントエンド・BFF/02_詳細設計書/structure_2.md');
+}
+```
+
+> **注**: hooksによるファイル自動注入はOMCのOpenClaw連携機能を使う方法のほか、
+> `CLAUDE.md`のルーティングテーブルと組み合わせて手動でトリガーする方法もある。
+
+---
+
+## 3. structure.mdの読み方
+
+`structure_1.md` / `structure_2.md` はフロントエンドのファイル配置を定義するドキュメントです。
+
+### 階層構造（3層）
+
+```
+features/
+├── {LV1-feature-group}/          # LV1: 大きな機能群（例: 01_medical-records）
+│   ├── {LV2-feature}/            # LV2: 業務フロー単位（例: 01_record-creation）
+│   │   ├── {LV3-screen-feature}/ # LV3: 画面1つに対応（例: 01_examination-input）
+│   │   │   ├── api/              # BFF通信ロジック（*.api.ts）
+│   │   │   ├── components/       # molecules/ と organisms/
+│   │   │   ├── hooks/            # 画面固有のカスタムフック
+│   │   │   ├── stores/           # Zustand ストア
+│   │   │   ├── types/            # UIの型定義（*.type.ts）
+│   │   │   ├── test/             # テスト（*_test.tsx / *_flow.test.tsx）
+│   │   │   └── index.ts          # 公開窓口（必須）
+```
+
+### 機能IDの読み方
+
+```
+01_examination-input/  # LV3: 診察記録入力  [REC001]
+                                              ↑
+                                    機能ID（OMCがファイル特定に使う）
+```
+
+### 配置ルールのクイックリファレンス
+
+| 種別 | 置き場所 |
+|------|---------|
+| ロジックなしの最小UIパーツ（Button等） | `shared/components/atoms/` |
+| 汎用的な複合部品（SearchBox等） | `shared/components/molecules/` |
+| 画面固有の部品 | `features/.../components/molecules/` or `organisms/` |
+| 全画面共通型 | `shared/types/` |
+| 画面固有型 | `features/.../types/` |
+| フロント↔BFF間の共有型・スキーマ | `front_bff_shared/features/.../` |
+
+---
+
+## 4. skills の選択指針
+
+### フェーズ別の推奨skill
+
+| フェーズ | 読み込むskill |
+|---|---|
+| design (PRD作成) | `samples-prd-writing/SKILL.md` |
+| design (設計書作成) | `samples-design-writing/SKILL.md` |
+| implement / fix | `samples-steering/SKILL.md` |
+| poc | `arch-poc/SKILL.md` + `arch-poc/poc-quality.md` |
+| エージェント判断委譲 | `common-decision-gate/SKILL.md` |
+
+### OMCグローバルスキルの活用
+
+```
+/skill list                    # 利用可能なスキル一覧
+/oh-my-claudecode:omc-reference  # OMCのスキル・エージェント全カタログ
+```
+
+---
+
+## 5. commands の選択指針
+
+### 指示内容→使うcommand
+
+| やりたいこと | 使うcommand |
+|---|---|
+| 新機能の要件・設計を固める | `.claude/commands/design.md` → `/design {domain}/Fxx_機能名` |
+| 基盤設計書（アーキ・NFR等）を作る | `.claude/commands/design.md` → `/design 02_アプリ基盤/ファイル名` |
+| コードのリファクタリング設計 | `.claude/commands/design.md` → `/design refactor/概要` |
+| 設計済み機能を実装する | `.claude/commands/implement.md` → `/implement {domain}/Fxx_機能名` |
+| バグを修正する | `.claude/commands/fix.md` → `/fix {domain}/Fxx_機能名 バグの概要` |
+| 仕様・実装をレビューする | `.claude/commands/review.md` → `/review 対象パス` |
+| 技術選定・構成を検証する | `.claude/commands/review.md` → `/poc {対象コンポーネント}` |
+| プロジェクトを一から立ち上げる | `.claude/commands/init.md` → `/init` |
+
+### コマンドとフェーズの対応
+
+```
+idle → /poc または /design で次フェーズへ
+poc  → PoC完了後 /design へ（人間が判断）
+design → 設計完了・/review PASS後 /implement へ（人間が判断）
+implement → 実装完了・/review PASS後 idle へ戻る
+```
+
+**注意**: フェーズの進行は必ず人間が判断する。AIが自動で次フェーズへ進まない。
+
+---
+
+## 6. エージェントの選択
+
+CLAUDE.mdに登録されたサブエージェント群。用途に応じて使い分ける。
+
+### 調査エージェント（読み取り専用）
+
+| エージェント | いつ使うか |
+|---|---|
+| **codebase-researcher** | 「このパターンは既存コードでどう実装されているか」を確認したいとき |
+| **spec-cross-checker** | 新機能が既存仕様と重複・矛盾しないか確認したいとき |
+| **impact-analyzer** | コード変更前に影響する箇所を洗い出したいとき |
+| **poc-item-extractor** | 方式設計書からPoC検証項目を整理したいとき |
+
+### 作成エージェント（ファイルを書き出す）
+
+| エージェント | いつ使うか |
+|---|---|
+| **prd-drafter** | ヒアリング内容・調査結果をもとにPRDドラフトを書かせたいとき |
+| **design-drafter** | PRDと調査結果から機能設計書ドラフトを書かせたいとき |
+| **frontend-detail-design-drafter** | 機能設計書とFigma Makeコードから詳細設計書を書かせたいとき |
+| **core-design-drafter** | PoC報告書・ヒアリング結果から `docs/02_アプリ基盤/` のドキュメントを作成したいとき |
+| **test-planner** | PRDの受入条件からテスト計画を生成したいとき |
+
+### 検証エージェント（読み取り専用）
+
+| エージェント | いつ使うか |
+|---|---|
+| **spec-reviewer** | PRD・設計書の品質を客観的にレビューさせたいとき |
+| **design-validator** | 設計書がPRDを網羅しているか・基盤設計と整合しているか確認したいとき |
+| **impl-validator** | 実装が仕様通りか照合したいとき |
+| **consistency-checker** | INDEX.md・CLAUDE.md・設計書間のメタデータの一致を確認したいとき |
+| **poc-evaluator** | PoC合否基準と実行結果を数値照合したいとき |
+
+---
+
+## 7. OMCエージェントカタログ（グローバル）
+
+OMC自体が持つ汎用エージェント（`oh-my-claudecode:` プレフィックス）。
+
+| エージェント | モデル | 用途 |
+|---|---|---|
+| explore | haiku | コードベースの高速調査 |
+| analyst | opus | 要件分析・深い調査 |
+| planner | opus | 実装計画の立案 |
+| architect | opus | アーキテクチャ設計 |
+| debugger | sonnet | デバッグ・原因調査 |
+| executor | sonnet | コード実装の実行 |
+| verifier | sonnet | 実装の検証 |
+| code-reviewer | opus | コードレビュー |
+| designer | sonnet | UI/UXデザイン |
+| writer | haiku | ドキュメント執筆 |
+| security-reviewer | sonnet | セキュリティレビュー |

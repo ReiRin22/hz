@@ -1,0 +1,23 @@
+{
+  "name": "BFF",
+  "dockerComposeFile": [
+    "../../docker-compose.yml"
+  ],
+  "service": "bff",
+  "runServices": [
+    "frontend",
+    "bff",
+    "karte-domain-service",
+    "harz-db"
+  ],
+  "workspaceFolder": "/workspaces/harz",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "MS-CEINTL.vscode-language-pack-ja",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

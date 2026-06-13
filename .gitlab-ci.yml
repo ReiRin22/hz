@@ -1,0 +1,881 @@
+# ═══════════════════════════════════════════════════════════════════
+# Harz CI/CD Pipeline - develop ブランチへの MR 時（6ステージ構成）
+# ═══════════════════════════════════════════════════════════════════
+# Stages:
+#   1. format         - コード整形チェック（Prettier, dotnet format）
+#   2. lint           - 静的解析（ESLint, StyleLint, tsc, Roslyn Analyzers）
+#   3. build          - ビルド成功確認（FE, BFF, BE, Storybook）
+#   4. unit_test      - 単体テスト（Vitest, NUnit, Storybook Test Runner）
+#   5. ai_review      - AI コードレビュー（Bedrock Claude Sonnet 4.6）
+#
+# Runner: harz (concurrent=3)
+# トリガー: feature/* → develop への MR 作成時・コミット追加時
+# ═══════════════════════════════════════════════════════════════════
+
+stages:
+  - format
+  - lint
+  - build
+  - unit_test
+  - deploy_dev
+  - ai_review
+
+# デフォルトの失敗時動作: ステージが失敗したら後続ステージは実行しない
+default:
+  retry: 0  # リトライなし（即座に失敗扱い）
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 1: Format - コード整形チェック
+# ═══════════════════════════════════════════════════════════════════
+
+format:fe:
+  stage: format
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run format:check
+  allow_failure: false  # 失敗時はパイプライン停止
+
+format:bff:
+  stage: format
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run format:check
+  allow_failure: false
+
+format:be:
+  stage: format
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet format --verify-no-changes
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 2: Lint - 静的解析
+# ═══════════════════════════════════════════════════════════════════
+
+lint:fe:eslint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run lint
+  allow_failure: false
+
+lint:fe:tsc:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npx tsc --noEmit
+  allow_failure: false
+
+lint:fe:stylelint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run stylelint
+  allow_failure: false
+
+lint:bff:eslint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run lint
+  allow_failure: false
+
+lint:be:roslyn:
+  stage: lint
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet build /warnaserror
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 3: Build - ビルド成功確認
+# ═══════════════════════════════════════════════════════════════════
+
+build:fe:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build
+  artifacts:
+    paths:
+      - product/frontend/.next/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:bff:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build
+  artifacts:
+    paths:
+      - product/bff/dist/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:be:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet build --configuration Release
+  artifacts:
+    paths:
+      - product/backend/KarteDomainService/bin/Release/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:storybook:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build-storybook
+  artifacts:
+    paths:
+      - product/frontend/storybook-static/
+    expire_in: 1 hour
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 4: Unit Test - 単体テスト
+# ═══════════════════════════════════════════════════════════════════
+
+test:fe:vitest:
+  stage: unit_test
+  image: node:20
+  tags:
+    - harz
+  variables:
+    NODE_OPTIONS: "--max-old-space-size=4096"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run test:run -- --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: product/frontend/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/frontend/coverage/cobertura-coverage.xml
+    paths:
+      - product/frontend/coverage/
+    expire_in: 7 days
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  allow_failure: false
+
+test:bff:vitest:
+  stage: unit_test
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run test:run -- --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: product/bff/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/bff/coverage/cobertura-coverage.xml
+    paths:
+      - product/bff/coverage/
+    expire_in: 7 days
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  allow_failure: false
+
+test:be:nunit:
+  stage: unit_test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet test --configuration Release --logger "junit;LogFilePath=TestResults/junit.xml" --collect:"XPlat Code Coverage"
+  artifacts:
+    when: always
+    reports:
+      junit: product/backend/KarteDomainService/TestResults/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/backend/KarteDomainService/TestResults/*/coverage.cobertura.xml
+    paths:
+      - product/backend/KarteDomainService/TestResults/
+    expire_in: 7 days
+  allow_failure: false
+
+test:storybook:
+  stage: unit_test
+  image: mcr.microsoft.com/playwright:v1.59.1-jammy
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build-storybook
+    - npm run test-storybook
+  artifacts:
+    when: on_failure
+    paths:
+      - product/frontend/__image_snapshots__/__diff_output__/
+    expire_in: 7 days
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 5: AI Code Review（MR 作成時のみ実行）
+# ═══════════════════════════════════════════════════════════════════
+
+ai_review:
+  stage: ai_review
+  image: python:3.12-slim
+  tags:
+    - harz
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    WORKSPACE_PATH: "/builds/harz/harz"
+    LOG_DIR: "$CI_PROJECT_DIR/gitlab-runner/logs/cicd"
+  cache:
+    paths:
+      - .cache/pip
+      - .cache/npm
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+      when: never
+  before_script:
+    - 'apt-get update && apt-get install -y curl git procps'
+    - 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -'
+    - 'apt-get install -y nodejs'
+    - 'node --version && npm --version'
+    - 'pip install boto3 requests --quiet'
+    - 'mkdir -p "$LOG_DIR"'
+    # リソースモニタリング開始
+    - 'chmod +x .gitlab/monitor-resources.sh'
+    - '.gitlab/monitor-resources.sh resource-usage-ai-review.log &'
+    - 'echo $! > monitor.pid'
+    - 'echo "Serena MCP Server を HTTP モードで起動中..."'
+    - 'pip install git+https://github.com/oraios/serena --quiet || (echo "Serena install failed" && exit 1)'
+    - 'serena start-mcp-server --transport streamable-http --host 127.0.0.1 --port 8000 --project "$WORKSPACE_PATH" --log-level INFO > "$LOG_DIR/serena.log" 2>&1 & echo $! > "$LOG_DIR/serena.pid"'
+    - 'echo "Serena MCP Server PID: $(cat "$LOG_DIR/serena.pid")"'
+    - 'echo "Waiting for Serena to initialize (30 seconds)..."'
+    - 'sleep 30'
+    - 'ps aux | grep serena || echo "Warning: Serena process not found"'
+    - 'curl -s http://127.0.0.1:8000/ || echo "Warning: Serena HTTP endpoint not responding"'
+    - 'tail -20 "$LOG_DIR/serena.log" || true'
+  script:
+    - 'cd .claude/cicd'
+    - 'python mr_review_ci.py'
+  after_script:
+    # リソースモニタリング停止
+    - 'kill $(cat monitor.pid) 2>/dev/null || true'
+    - 'echo "=== Resource Usage (AI Review) ==="'
+    - 'tail -20 resource-usage-ai-review.log || true'
+    - 'echo "=== Serena Log ==="'
+    - 'cat "$LOG_DIR/serena.log" || true'
+    - 'if [ -f "$LOG_DIR/serena.pid" ]; then kill $(cat "$LOG_DIR/serena.pid") 2>/dev/null || true; fi'
+    - 'echo "AI レビュー完了"'
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - gitlab-runner/logs/cicd/*.log
+      - resource-usage-ai-review.log
+  timeout: 20 minutes
+  allow_failure: true  # AI Review は失敗してもマージ可能
+
+# ═══════════════════════════════════════════════════════════════════
+# Harz CI/CD Pipeline - main ブランチへの MR 時（7ステージ構成）
+# ═══════════════════════════════════════════════════════════════════
+# Stages:
+#   1. format              - コード整形チェック（Prettier, dotnet format）
+#   2. lint                - 静的解析（ESLint, StyleLint, tsc, Roslyn Analyzers）
+#   3. build               - ビルド成功確認（FE, BFF, BE, Storybook）
+#   4. unit_test           - 単体テスト（Vitest, NUnit, Storybook Test Runner）
+#   5. deploy_staging      - Staging サーバーへのデプロイ
+#   6. integration_test    - 統合・E2E テスト（Playwright, API テスト）
+#   7. ai_review           - AI コードレビュー（Bedrock Claude Sonnet 4.6）
+#
+# Runner: harz (concurrent=3)
+# トリガー: develop → main への MR 作成時・コミット追加時
+# ═══════════════════════════════════════════════════════════════════
+
+stages:
+  - format
+  - lint
+  - build
+  - unit_test
+  - deploy_staging
+  - integration_test
+  - ai_review
+
+# デフォルトの失敗時動作: ステージが失敗したら後続ステージは実行しない
+default:
+  retry: 0  # リトライなし（即座に失敗扱い）
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 1: Format - コード整形チェック（develop と同様）
+# ═══════════════════════════════════════════════════════════════════
+
+format:fe:
+  stage: format
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run format:check
+  allow_failure: false
+
+format:bff:
+  stage: format
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run format:check
+  allow_failure: false
+
+format:be:
+  stage: format
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet format --verify-no-changes
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 2: Lint - 静的解析（develop と同様）
+# ═══════════════════════════════════════════════════════════════════
+
+lint:fe:eslint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run lint
+  allow_failure: false
+
+lint:fe:tsc:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npx tsc --noEmit
+  allow_failure: false
+
+lint:fe:stylelint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run stylelint
+  allow_failure: false
+
+lint:bff:eslint:
+  stage: lint
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run lint
+  allow_failure: false
+
+lint:be:roslyn:
+  stage: lint
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet build /warnaserror
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 3: Build - ビルド成功確認（develop と同様）
+# ═══════════════════════════════════════════════════════════════════
+
+build:fe:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build
+  artifacts:
+    paths:
+      - product/frontend/.next/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:bff:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build
+  artifacts:
+    paths:
+      - product/bff/dist/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:be:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet build --configuration Release
+  artifacts:
+    paths:
+      - product/backend/KarteDomainService/bin/Release/
+    expire_in: 1 hour
+  allow_failure: false
+
+build:storybook:
+  stage: build
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build-storybook
+  artifacts:
+    paths:
+      - product/frontend/storybook-static/
+    expire_in: 1 hour
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 4: Unit Test - 単体テスト（develop と同様）
+# ═══════════════════════════════════════════════════════════════════
+
+test:fe:vitest:
+  stage: unit_test
+  image: node:20
+  tags:
+    - harz
+  variables:
+    NODE_OPTIONS: "--max-old-space-size=4096"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run test:run -- --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: product/frontend/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/frontend/coverage/cobertura-coverage.xml
+    paths:
+      - product/frontend/coverage/
+    expire_in: 7 days
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  allow_failure: false
+
+test:bff:vitest:
+  stage: unit_test
+  image: node:20
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run test:run -- --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: product/bff/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/bff/coverage/cobertura-coverage.xml
+    paths:
+      - product/bff/coverage/
+    expire_in: 7 days
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  allow_failure: false
+
+test:be:nunit:
+  stage: unit_test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/backend/KarteDomainService
+  script:
+    - dotnet test --configuration Release --logger "junit;LogFilePath=TestResults/junit.xml" --collect:"XPlat Code Coverage"
+  artifacts:
+    when: always
+    reports:
+      junit: product/backend/KarteDomainService/TestResults/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: product/backend/KarteDomainService/TestResults/*/coverage.cobertura.xml
+    paths:
+      - product/backend/KarteDomainService/TestResults/
+    expire_in: 7 days
+  allow_failure: false
+
+test:storybook:
+  stage: unit_test
+  image: mcr.microsoft.com/playwright:v1.59.1-jammy
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build-storybook
+    - npm run test-storybook
+  artifacts:
+    when: on_failure
+    paths:
+      - product/frontend/__image_snapshots__/__diff_output__/
+    expire_in: 7 days
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 5: Deploy (Staging) - Staging サーバーへのデプロイ
+# ═══════════════════════════════════════════════════════════════════
+
+deploy:staging:
+  stage: deploy_staging
+  image: alpine:latest
+  tags:
+    - harz
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - apk add --no-cache openssh-client rsync
+  script:
+    - echo "Deploying to Staging server..."
+    # SSH 経由でデプロイ（鍵は CI/CD Variables で設定）
+    - mkdir -p ~/.ssh
+    - echo "$STAGING_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $STAGING_SERVER_HOST >> ~/.ssh/known_hosts
+    # Frontend デプロイ
+    - rsync -avz --delete product/frontend/.next/ $STAGING_SERVER_USER@$STAGING_SERVER_HOST:/var/www/harz/frontend/
+    # BFF デプロイ
+    - rsync -avz --delete product/bff/dist/ $STAGING_SERVER_USER@$STAGING_SERVER_HOST:/var/www/harz/bff/
+    # Backend デプロイ
+    - rsync -avz --delete product/backend/KarteDomainService/bin/Release/ $STAGING_SERVER_USER@$STAGING_SERVER_HOST:/var/www/harz/backend/
+    # サービス再起動
+    - ssh $STAGING_SERVER_USER@$STAGING_SERVER_HOST "sudo systemctl restart harz-frontend harz-bff harz-backend"
+    - echo "✅ Deploy to Staging server completed"
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 6: Integration Test - 統合・E2E テスト（main への MR 時のみ）
+# ═══════════════════════════════════════════════════════════════════
+
+test:e2e:playwright:
+  stage: integration_test
+  image: mcr.microsoft.com/playwright:v1.59.1-jammy
+  tags:
+    - harz
+  variables:
+    CI: "true"
+    E2E_BASE_URL: "https://staging.harz.example.com"  # Staging サーバーの URL
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/frontend
+  script:
+    - npm ci --no-audit --no-fund --prefer-offline
+    # Staging サーバーに対して E2E テストを実行
+    - npm run test:e2e
+  artifacts:
+    when: always
+    expire_in: 7 days
+    reports:
+      junit: gitlab-runner/logs/junit-*.xml
+    paths:
+      - gitlab-runner/logs/e2e-*.log
+      - gitlab-runner/logs/junit-*.xml
+      - gitlab-runner/logs/videos/*.webm
+  allow_failure: false
+
+test:api:integration:
+  stage: integration_test
+  image: node:20
+  tags:
+    - harz
+  variables:
+    API_BASE_URL: "https://staging-api.harz.example.com"  # Staging BFF の URL
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - cd product/bff
+  script:
+    - npm ci --no-audit --no-fund
+    # Staging BFF に対して API 統合テストを実行
+    - npm run test:integration
+  artifacts:
+    when: always
+    reports:
+      junit: product/bff/junit-integration.xml
+    paths:
+      - product/bff/junit-integration.xml
+    expire_in: 7 days
+  allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════
+# Stage 7: AI Code Review（MR 作成時のみ実行）
+# ═══════════════════════════════════════════════════════════════════
+
+ai_review:
+  stage: ai_review
+  image: python:3.12-slim
+  tags:
+    - harz
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    WORKSPACE_PATH: "/builds/harz/harz"
+    LOG_DIR: "$CI_PROJECT_DIR/gitlab-runner/logs/cicd"
+  cache:
+    paths:
+      - .cache/pip
+      - .cache/npm
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      when: never
+  before_script:
+    - 'apt-get update && apt-get install -y curl git procps'
+    - 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -'
+    - 'apt-get install -y nodejs'
+    - 'node --version && npm --version'
+    - 'pip install boto3 requests --quiet'
+    - 'mkdir -p "$LOG_DIR"'
+    # リソースモニタリング開始
+    - 'chmod +x .gitlab/monitor-resources.sh'
+    - '.gitlab/monitor-resources.sh resource-usage-ai-review.log &'
+    - 'echo $! > monitor.pid'
+    - 'echo "Serena MCP Server を HTTP モードで起動中..."'
+    - 'pip install git+https://github.com/oraios/serena --quiet || (echo "Serena install failed" && exit 1)'
+    - 'serena start-mcp-server --transport streamable-http --host 127.0.0.1 --port 8000 --project "$WORKSPACE_PATH" --log-level INFO > "$LOG_DIR/serena.log" 2>&1 & echo $! > "$LOG_DIR/serena.pid"'
+    - 'echo "Serena MCP Server PID: $(cat "$LOG_DIR/serena.pid")"'
+    - 'echo "Waiting for Serena to initialize (30 seconds)..."'
+    - 'sleep 30'
+    - 'ps aux | grep serena || echo "Warning: Serena process not found"'
+    - 'curl -s http://127.0.0.1:8000/ || echo "Warning: Serena HTTP endpoint not responding"'
+    - 'tail -20 "$LOG_DIR/serena.log" || true'
+  script:
+    - 'cd .claude/cicd'
+    - 'python mr_review_ci.py'
+  after_script:
+    # リソースモニタリング停止
+    - 'kill $(cat monitor.pid) 2>/dev/null || true'
+    - 'echo "=== Resource Usage (AI Review) ==="'
+    - 'tail -20 resource-usage-ai-review.log || true'
+    - 'echo "=== Serena Log ==="'
+    - 'cat "$LOG_DIR/serena.log" || true'
+    - 'if [ -f "$LOG_DIR/serena.pid" ]; then kill $(cat "$LOG_DIR/serena.pid") 2>/dev/null || true; fi'
+    - 'echo "AI レビュー完了"'
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - gitlab-runner/logs/cicd/*.log
+      - resource-usage-ai-review.log
+  timeout: 20 minutes
+  allow_failure: true  # AI Review は失敗してもマージ可能

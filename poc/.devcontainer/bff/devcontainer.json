@@ -1,0 +1,26 @@
+{
+  "name": "BFF PoC",
+  "dockerComposeFile": [
+    "../../docker-compose.yml"
+  ],
+  "service": "bff",
+  "runServices": [
+    "frontend",
+    "bff",
+    "karte-domain-service",
+    "harz-db"
+  ],
+  "workspaceFolder": "/workspaces/harz",
+  // コンテナ上のターミナルでClaudeCodeを利用する場合は、
+  // 以下のコメントアウトを外して、リビルドしてください。
+  // "postCreateCommand": "apt-get update && apt-get install -y curl && curl -fsSL https://claude.ai/install.sh | bash && ln -sf $HOME/.local/bin/claude /usr/local/bin/claude",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "MS-CEINTL.vscode-language-pack-ja",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

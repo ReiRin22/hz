@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Find all state.md files under .steering/
+state_files=$(find .steering -name "state.md" 2>/dev/null || true)
+
+if [ -z "$state_files" ]; then
+  # No state.md found — return empty context
+  echo '{"additionalContext": ""}'
+  exit 0
+fi
+
+# Read all state.md files and find the latest one by last_updated
+latest_state_file=""
+latest_date=""
+
+while IFS= read -r state_file; do
+  # Extract last_updated field (YAML format: last_updated: "YYYY-MM-DD")
+  last_updated=$(grep '^last_updated:' "$state_file" | sed 's/^last_updated: *"\?\([^"]*\)"\?$/\1/' || echo "")
+
+  if [ -n "$last_updated" ]; then
+    if [ -z "$latest_date" ] || [ "$last_updated" \> "$latest_date" ]; then
+      latest_date="$last_updated"
+      latest_state_file="$state_file"
+    fi
+  fi
+done <<< "$state_files"
+
+if [ -z "$latest_state_file" ]; then
+  # No valid state.md with last_updated field
+  echo '{"additionalContext": ""}'
+  exit 0
+fi
+
+# Extract phase field to check if this is a relevant command
+phase=$(grep '^phase:' "$latest_state_file" | sed 's/^phase: *"\?\([^"]*\)"\?$/\1/' || echo "")
+
+# Only inject compact_resume for specific phases (implement, synchronizer, backend, etc.)
+case "$phase" in
+  implement|synchronizer|backend)
+    # Relevant phase — proceed to extract compact_resume
+    ;;
+  *)
+    # Irrelevant phase (design, poc, idle, etc.) — return empty context
+    echo '{"additionalContext": ""}'
+    exit 0
+    ;;
+esac
+
+# Extract compact_resume field (YAML multi-line string after compact_resume: |)
+compact_resume=$(awk '/^compact_resume: *\|/{flag=1; next} /^[^ ]/ && flag{exit} flag' "$latest_state_file" || echo "")
+
+if [ -z "$compact_resume" ]; then
+  # No compact_resume field
+  echo '{"additionalContext": ""}'
+  exit 0
+fi
+
+# Escape for JSON (same as superpowers)
+escape_for_json() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/\\r}"
+  s="${s//$'\t'/\\t}"
+  printf '%s' "$s"
+}
+
+escaped_resume=$(escape_for_json "$compact_resume")
+context="<session-resume>\n前回のセッション進捗:\n\n${escaped_resume}\n</session-resume>"
+
+# Output as JSON (same format as superpowers for Claude Code)
+if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then
+  # Claude Code
+  printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$context"
+else
+  # Other platforms
+  printf '{\n  "additionalContext": "%s"\n}\n' "$context"
+fi
+
+exit 0

@@ -1,0 +1,17 @@
+/* 1. 全てを読み込む（以前の3行は不要） */
+@import "tailwindcss";
+
+/* 2. テーマ変数の定義（v4推奨の書き方） */
+@theme {
+  --color-primary: var(--primary-color);
+}
+
+/* 3. 値の定義（ここで色を一括管理） */
+:root {
+  --primary-color: #ff0000; /* 赤 */
+}
+
+/* 4. コンポーネントへの適用（@applyもここで使う） */
+.karte-button {
+  @apply bg-primary text-white px-4 py-2 rounded transition-opacity;
+}

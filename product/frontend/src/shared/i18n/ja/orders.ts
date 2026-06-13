@@ -1,0 +1,124 @@
+export const orders = {
+  orderConfirmation: {
+    // OrderStatusBadge
+    statusBadge: {
+      confirmed: "確定済み",
+      pending: "確定待ち",
+    },
+
+    // OrderItem
+    orderItem: {
+      editTitle: "編集",
+      cancelRestoreTitle: "取り消しを戻す",
+      deleteTitle: "削除",
+      cancelTitle: "取り消し",
+      orderStatus: {
+        ordered: "指示受け",
+        accepted: "受付済み",
+        inProgress: "開始済み",
+        completed: "実施済み",
+      },
+      fields: {
+        dosage: "用量:",
+        frequency: "頻度:",
+        duration: "期間:",
+        priority: "優先度:",
+        amount: "量:",
+        instructions: "指示:",
+        scheduledAt: "実施予定:",
+        confirmedAt: "確定日時:",
+        implementedAt: "実施:",
+        implementedBy: "実施者:",
+      },
+    },
+
+    // OrderInputTabs
+    orderInputTabs: {
+      addOrder: "オーダー追加",
+      selectOrderType: "オーダー種別選択",
+      selectOrderTypeDesc: "追加するオーダーの種別を選択してください",
+      cancel: "キャンセル",
+    },
+
+    // OrderList
+    orderList: {
+      pending: (count: number) => `未確定 (${count}件)`,
+      confirmed: (count: number) => `確定済み (${count}件)`,
+    },
+
+    // OrderInput
+    orderInput: {
+      title: "オーダー確定",
+      registered: (count: number) => `${count}件登録済み`,
+      printOutput: "帳票出力",
+      outputShort: "出力",
+      submitOrder: (count: number) => `オーダー確定 (${count}件)`,
+      submitOrderShort: (count: number) => `確定 (${count})`,
+      emptyTitle: "オーダーがありません",
+      emptyDescLine1: "オーダー追加ボタンから",
+      emptyDescLine2: "新しいオーダーを登録してください",
+    },
+
+    // OrderDialogs
+    orderDialogs: {
+      edit: {
+        title: "確定済みオーダーの編集",
+        description:
+          "このオーダーは既に確定されています。編集する理由を記入してください。",
+        reasonLabel: "編集理由",
+        reasonPlaceholder: "編集理由を入力してください...",
+        cancel: "キャンセル",
+        confirm: "編集を実行",
+      },
+      delete: {
+        title: "確定済みオーダーの取り消し",
+        description:
+          "このオーダーは既に確定されています。取り消す理由を記入してください。",
+        warningLabel: "注意：",
+        warningNote:
+          "取り消されたオーダーは取り消し線で表示されますが、システムから完全に削除されるわけではありません。",
+        reasonLabel: "取り消し理由",
+        reasonPlaceholder: "取り消し理由を入力してください...",
+        cancel: "キャンセル",
+        confirm: "取り消しを実行",
+      },
+      reOutput: {
+        title: "帳票再出力の確認",
+        descriptionLine1: "以下のオーダーはすでに出力済みの帳票があります。",
+        descriptionLine2: "変更後の内容で帳票を再出力しますか？",
+        modifiedOrdersLabel: "修正されたオーダー",
+        orderId: (id: string) => `オーダーID: ${id}`,
+        cancel: "いいえ（再出力しない）",
+        confirm: "はい（再出力する）",
+      },
+      labCheck: {
+        title: "検査オーダー相互チェック",
+        description:
+          "以下の警告が検出されました。内容を確認の上、オーダーを確定してください。",
+        cancel: "キャンセル",
+        confirm: "確認してオーダー確定",
+      },
+      allergyCheck: {
+        title: "アレルギー・禁忌チェック",
+        description:
+          "以下の重要な警告が検出されました。必ず内容を確認してください。",
+        recommendationLabel: "推奨事項:",
+        cancel: "キャンセル",
+        confirm: "リスクを理解して確定",
+      },
+    },
+  },
+  specimenOrderEntry: {
+    panelTitle: '検体検査オーダー入力',
+    cancel: 'キャンセル',
+    confirmPanel: {
+      confirmed: 'オーダー確定済み',
+      header: (count: number) => `オーダー確認 (${count}件)`,
+      empty: 'オーダー項目がありません',
+    },
+    confirmButton: {
+      submitting: '確定中...',
+      submit: '確定へ進む',
+    },
+  },
+} as const;
